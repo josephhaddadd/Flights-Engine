@@ -39,31 +39,35 @@
 /* =========================================================================
    ✏️  DATA — EDIT ONLY THIS SECTION. Times "mm:ss".
    ========================================================================= */
+/* ============ DATA — CHAPTER 5A: THE 767 ============ */
 var CONFIG={
   style:'mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r',
   token:'pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA',
-  trails:true, length:'0:16', speed:1
+  trails:true, length:'0:40', speed:1
 };
+
 var FLIGHTS={
-  FL01:{color:'auto',label:'FL01',track:[[1717272000,40.821,-74.24,9000,89],[1717272063,40.821,-74.04,5000,89],[1717272126,40.821,-73.84,1000,0]]},
-  FL05:{color:'auto',label:'FL05',track:[[1717272012,40.66,-74.24,9500,43],[1717272075,40.82,-74.04,6000,43],[1717272138,40.98,-73.84,2500,0]]},
-  FL10:{color:'auto',label:'FL10',track:[[1717272027,40.9,-74.1,9000,123],[1717272099,40.8,-73.92,5000,142],[1717272171,40.7,-73.82,1200,151],[1717272207,40.6413,-73.7781,0,151]]}
+  /* PASTE THE UAL963 LINE FROM scene_ewr_diversions.js HERE */
 };
+
 var AIRPORTS=[
-  {name:'Newark Liberty International Airport', at:[-74.1687,40.6895]},
-  {name:'John F. Kennedy International Airport', at:[-73.7781,40.6413]},
-  {name:'LaGuardia Airport',                     at:[-73.8740,40.7769]},
-  {name:'Teterboro Airport',                     at:[-74.0608,40.8501]}
+  {name:'Teterboro',                    at:[-74.0608,40.8501]},
+  {name:'Newark Liberty International', at:[-74.1687,40.6895]},
+  {name:'Boston Logan International',   at:[-71.0096,42.3656]},
+  {name:'MetLife Stadium',              at:[-74.0745,40.8135]}
 ];
+
 var SCENES=[
-  { time:'0:00 -> 0:08', camera:'still', where:[-74.040,40.821], window:'stillZoom', planes:'all', transition:'-' },
-  { time:'0:08 -> 0:16', camera:'track FL10', window:'trackZoom', planes:'all', highlight:'FL10', transition:'smooth' }
+  { time:'0:00 -> 0:06', camera:'still', where:[-72.5421,41.5896], window:'wideEast', planes:'all',  transition:'-' },
+  { time:'0:06 -> 0:22', camera:'track UAL963', window:'follow',   planes:'all', highlight:'UAL963', transition:'smooth' },
+  { time:'0:22 -> 0:32', camera:'still', where:[-73.9000,41.5500], window:'holdZoom', planes:'all', highlight:'UAL963', transition:'smooth' },
+  { time:'0:32 -> 0:40', camera:'still', where:[-72.5421,41.5896], window:'wideEast', planes:'all', highlight:'UAL963', transition:'smooth' }
 ];
 
 /* =========================================================================
    ⚙️  ENGINE — do not edit
    ========================================================================= */
-var WIN={wide:8.6,medium:10.5,tight:12.5,stillZoom:10.2,trackZoom:11.8};
+var WIN={wide:8.6,medium:10.5,tight:12.5,stillZoom:10.2,trackZoom:11.8,wideEast:6.6,follow:7.8,holdZoom:8.6};
 function vColor(vs){ if(vs==='climb')return '#22C55E'; if(vs==='descend')return '#FF6B6B'; return '#9fd0ff'; }
 function trailColor(f,vs){ if(f.color==='auto')return vColor(vs); return f.color; }
 function mmss(v){var p=String(v).trim().split(':');return (+p[0])*60+(+p[1]);}
