@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Ch5A - The 767</title>
+<style>
+body{margin:0;background:#000;font-family:'Helvetica Neue',Arial,sans-serif;}
+#map{position:absolute;top:0;bottom:60px;width:100%;}
+#clockbox{position:absolute;top:18px;right:20px;z-index:8;color:#fff;text-align:right;background:rgba(15,18,26,.45);border:1px solid rgba(255,255,255,.12);padding:7px 11px;border-radius:7px;line-height:1.25;}
+#clockbox .rt{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;}
+#clockbox .rd{font-size:10px;color:#aab4c5;margin-top:1px;}
+#clockbox .sp{display:inline-block;font-size:9px;color:#0b0e14;background:#ffd24d;padding:1px 6px;border-radius:10px;margin-top:5px;font-weight:700;}
+#scene{position:absolute;top:74px;right:20px;z-index:8;color:#8fa2c0;font-size:11px;text-align:right;background:rgba(15,18,26,.4);padding:3px 8px;border-radius:5px;}
+#readout{position:absolute;bottom:72px;left:16px;z-index:7;background:rgba(0,0,0,.82);color:#0f0;font-family:monospace;font-size:13px;padding:10px;border-radius:6px;display:none;white-space:pre;}
+#bar{position:absolute;bottom:0;left:0;right:0;height:60px;background:#111;display:flex;align-items:center;padding:0 16px;gap:12px;z-index:6;}
+#bar button{background:#E63946;color:#fff;border:none;width:46px;height:36px;border-radius:6px;font-size:16px;cursor:pointer;}
+#scrub{flex:1;cursor:pointer;}
+#tlabel{color:#9fd0ff;font-size:14px;width:70px;text-align:right;}
+#hint{position:absolute;bottom:66px;right:16px;z-index:6;color:#666;font-size:11px;font-family:monospace;}
+body.clean #map{bottom:0;}
+body.clean #bar,body.clean #hint,body.clean #scene,body.clean #readout{display:none!important;}
+</style></head><body>
+<div id="map"></div>
+<div id="clockbox"><div class="rt" id="rt">--:--:--</div><div class="rd" id="rd">--</div><span class="sp" id="sp">1x</span></div>
+<div id="scene"></div><div id="readout"></div>
+<div id="hint">C readout | H hide UI | Space play</div>
+<div id="bar"><button id="playBtn" onclick="togglePlay()">&#9654;</button>
+<input id="scrub" type="range" min="0" max="100" step="0.05" value="0" oninput="scrubTo(this.value)">
+<span id="tlabel">0:00.0</span></div>
+
+flightdata.js
+
+<script>
+var CONFIG={style:'mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r',
+ token:'pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA',
+ trails:true,length:'0:40',speed:1};
+var AIRPORTS=[
+ {name:'Teterboro',at:[-74.0608,40.8501]},
+ {name:'Newark Liberty International',at:[-74.1687,40.6895]},
+ {name:'Boston Logan International',at:[-71.0096,42.3656]}];
+var WIN={wide:6.5,follow:7.7,hold:9.0};
+function vColor(v){if(v==='climb')return '#22C55E';if(v==='descend')return '#FF6B6B';return '#9fd0ff';}
+function trailColor(f,v){if(f.color==='auto')return vColor(v);return f.color;}
+function mmss(v){var p=String(v).trim().split(':');return (+p[0])*60+(+p[1]);}
+function fmt(s){var m=Math.floor(s/60),x=(s%60);return m+':'+(x<10?'0':'')+x.toFixed(1);}
+function sm(p){return p*p*(3-2*p);}
+function pad(n){return (n<10?'0':'')+n;}
+function ftAlt(m){return Math.round(m*3.28084/100)*100;}
+var SPEED=CONFIG.speed||1;
+var SC=SCENES.map(function(s){var t=s.time.split('->');var mode='still',tgt=null;
+ if(s.camera.indexOf('track')===0){mode='track';tgt=s.camera.split(/\s+/)[1];}
+ return {a:mmss(t[0]),b:mmss(t[1]),mode:mode,target:tgt,where:s.where,win:s.window||'wide',
+  planes:s.planes||'all',highlight:s.highlight||null,trans:s.transition||'smooth'};});
+var VIDEO_LEN=mmss(CONFIG.length);
+var allTs=[];for(var k in FLIGHTS){var tr=FLIGHTS[k].track;allTs.push(tr[0][0]);allTs.push(tr[tr.length-1][0]);}
+var RT0=Math.min.apply(null,allTs),RT1=Math.max.apply(null,allTs);
+var REAL_PER_VID=((RT1-RT0)/VIDEO_LEN)*SPEED;
+function realAt(vt){return RT0+vt*REAL_PER_VID;}
+var SPEEDX=Math.round(REAL_PER_VID);
+var map,currentT=0,playing=false,lastWall=null,ready=false;
+var _h=['api','mapbox','com'].join('.'),_b='https://'+_h+'/mapbox-gl-js/v3.27.0/';
+var _c=document.createElement('link');_c.rel='stylesheet';_c.href=_b+'mapbox-gl.css';document.head.appendChild(_c);
+var _j=document.createElement('script');_j.src=_b+'mapbox-gl.js';_j.onload=init;document.head.appendChild(_j);
+function init(){
+ mapboxgl.accessToken=CONFIG.token;
+ map=new mapboxgl.Map({container:'map',style:CONFIG.style,center:CENTER,zoom:WIN.wide,projection:'mercator'});
+ document.getElementById('scrub').max=VIDEO_LEN;
+ document.getElementById('sp').textContent=SPEEDX+'x real time';
+ map.on('load',function(){
+  map.addSource('airports',{type:'geojson',data:{type:'FeatureCollection',features:AIRPORTS.map(function(a){
+   return {type:'Feature',properties:{name:a.name},geometry:{type:'Point',coordinates:a.at}};})}});
+  map.addLayer({id:'ap-tick',type:'circle',source:'airports',
+   paint:{'circle-radius':3,'circle-color':'#8fa2c0','circle-stroke-width':1,'circle-stroke-color':'rgba(255,255,255,.35)'}});
+  map.addLayer({id:'ap-lab',type:'symbol',source:'airports',
+   layout:{'text-field':['get','name'],'text-size':12,'text-offset':[0,1.2],'text-anchor':'top',
+    'text-allow-overlap':true,'text-letter-spacing':0.12,'text-max-width':9},
+   paint:{'text-color':'#c7d3e6','text-halo-color':'rgba(11,14,20,.55)','text-halo-width':0.6,'text-opacity':0.95}});
+  map.addSource('trails',{type:'geojson',data:fc([])});
+  map.addLayer({id:'trails',type:'line',source:'trails',layout:{'line-cap':'round','line-join':'round'},
+   paint:{'line-color':['get','color'],'line-width':3,'line-opacity':['get','op']}});
+  map.addSource('planes',{type:'geojson',data:fc([])});
+  map.addLayer({id:'planes',type:'symbol',source:'planes',
+   layout:{'text-field':'\u2708','text-size':['get','size'],'text-rotate':['get','bearing'],
+    'text-rotation-alignment':'map','text-allow-overlap':true},
+   paint:{'text-color':['get','color'],'text-opacity':['get','op'],'text-halo-color':'#000','text-halo-width':1.4}});
+  map.addLayer({id:'blocks',type:'symbol',source:'planes',
+   layout:{'text-field':['get','block'],'text-size':10,'text-offset':[0,1.5],'text-anchor':'top','text-allow-overlap':true},
+   paint:{'text-color':'#fff','text-opacity':['get','op'],'text-halo-color':'#000','text-halo-width':1.3}});
+  ready=true;render(0);keys();});}
+function fc(a){return {type:'FeatureCollection',features:a};}
+function idxAt(tr,T){if(T<=tr[0][0])return 0;if(T>=tr[tr.length-1][0])return tr.length-1;
+ for(var i=0;i<tr.length-1;i++){if(tr[i][0]<=T&&T<=tr[i+1][0])return i;}return tr.length-1;}
+function posAt(tr,T){
+ if(T<tr[0][0]||T>tr[tr.length-1][0])return null;
+ for(var i=0;i<tr.length-1;i++){var a=tr[i],b=tr[i+1];
+  if(a[0]<=T&&T<=b[0]){var u=(T-a[0])/((b[0]-a[0])||1);var h0=a[4],h1=b[4],dh=((h1-h0+540)%360)-180;
+   return {lon:a[2]+(b[2]-a[2])*u,lat:a[1]+(b[1]-a[1])*u,alt:a[3]+(b[3]-a[3])*u,hdg:(h0+dh*u+360)%360};}}
+ var L=tr[tr.length-1];return {lon:L[2],lat:L[1],alt:L[3],hdg:L[4]};}
+function posClamped(tr,T){var a=tr[0],z=tr[tr.length-1];
+ if(T<=a[0])return {lon:a[2],lat:a[1],alt:a[3],hdg:a[4]};
+ if(T>=z[0])return {lon:z[2],lat:z[1],alt:z[3],hdg:z[4]};
+ return posAt(tr,T);}
+function vstate(tr,T){var i=idxAt(tr,T);var a=tr[Math.max(0,i-1)],b=tr[Math.min(tr.length-1,i+1)];
+ var d=b[3]-a[3];if(d>60)return 'climb';if(d<-60)return 'descend';return 'level';}
+function sceneAt(vt){for(var i=0;i<SC.length;i++){if(vt>=SC[i].a&&vt<=SC[i].b)return {s:SC[i],i:i};}
+ return {s:SC[SC.length-1],i:SC.length-1};}
+function camResolve(sc,vt){
+ if(sc.mode==='track'&&FLIGHTS[sc.target]){var T=realAt(vt),p=posClamped(FLIGHTS[sc.target].track,T);
+  return {center:[p.lon,p.lat],zoom:WIN[sc.win]};}
+ return {center:sc.where,zoom:WIN[sc.win]};}
+function cameraAt(vt){
+ var cur=sceneAt(vt),s=cur.s,A=camResolve(s,vt);
+ if(cur.i>0){var prev=SC[cur.i-1];var into=(vt-s.a)/Math.max(0.001,(s.b-s.a));
+  if(s.trans==='cut')return A;
+  var dur=(s.trans==='fast')?0.15:0.35;
+  if(into<dur){var B=camResolve(prev,vt),p=sm(into/dur);
+   return {center:[B.center[0]+(A.center[0]-B.center[0])*p,B.center[1]+(A.center[1]-B.center[1])*p],
+    zoom:B.zoom+(A.zoom-B.zoom)*p};}}
+ return A;}
+function render(vt){
+ if(!ready)return;
+ var T=realAt(vt),c=cameraAt(vt);map.jumpTo({center:c.center,zoom:c.zoom});
+ var cur=sceneAt(vt),pm=cur.s.planes,hi=cur.s.highlight;
+ var planes=[],trails=[];
+ for(var id in FLIGHTS){
+  if(pm==='none')break;
+  var f=FLIGHTS[id],p=posAt(f.track,T);
+  if(!p)continue;
+  var vs=vstate(f.track,T),col=trailColor(f,vs);
+  var arrow=(vs==='climb')?'\u25B2':((vs==='descend')?'\u25BC':'');
+  var dim=(hi&&id!==hi),op=dim?0.18:1,sz=dim?22:((hi&&id===hi)?30:26);
+  var block=dim?'':(id+'\n'+ftAlt(p.alt).toLocaleString()+' '+arrow);
+  planes.push({type:'Feature',properties:{bearing:(p.hdg-90+360)%360,color:col,op:op,size:sz,block:block},
+   geometry:{type:'Point',coordinates:[p.lon,p.lat]}});
+  if(CONFIG.trails){var tr=f.track,co=[];
+   for(var i=0;i<tr.length;i++){if(tr[i][0]>T)break;co.push([tr[i][2],tr[i][1]]);}
+   co.push([p.lon,p.lat]);
+   if(co.length>1)trails.push({type:'Feature',properties:{color:col,op:dim?0.1:0.85},
+    geometry:{type:'LineString',coordinates:co}});}}
+ map.getSource('planes').setData(fc(planes));
+ map.getSource('trails').setData(fc(trails));
+ document.getElementById('scene').textContent='Shot '+(cur.i+1)+'/'+SC.length+' - '+cur.s.mode;
+ var d=new Date(T*1000);
+ document.getElementById('rt').textContent=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds())+' UTC';
+ var dy=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+ document.getElementById('rd').textContent=dy[d.getUTCDay()]+' '+d.getUTCDate()+' '+mo[d.getUTCMonth()]+' '+d.getUTCFullYear();
+ document.getElementById('tlabel').textContent=fmt(vt);
+ document.getElementById('scrub').value=vt;ro();}
+function loop(){if(!playing)return;var n=performance.now(),dt=(n-lastWall)/1000;lastWall=n;currentT+=dt;
+ if(currentT>=VIDEO_LEN){currentT=VIDEO_LEN;playing=false;document.getElementById('playBtn').innerHTML='\u25B6';}
+ render(currentT);if(playing)requestAnimationFrame(loop);}
+window.togglePlay=function(){playing=!playing;
+ document.getElementById('playBtn').innerHTML=playing?'\u2759\u2759':'\u25B6';
+ if(playing){if(currentT>=VIDEO_LEN)currentT=0;lastWall=performance.now();requestAnimationFrame(loop);}};
+window.scrubTo=function(v){playing=false;document.getElementById('playBtn').innerHTML='\u25B6';
+ currentT=parseFloat(v);render(currentT);};
+var roOn=false;
+function keys(){document.addEventListener('keydown',function(e){
+ if(e.key==='c'||e.key==='C'){roOn=!roOn;document.getElementById('readout').style.display=roOn?'block':'none';}
+ if(e.key==='h'||e.key==='H'){document.body.classList.toggle('clean');setTimeout(function(){map.resize();},50);}
+ if(e.key===' '){e.preventDefault();togglePlay();}});map.on('move',ro);}
+function ro(){if(!roOn)return;var c=map.getCenter();
+ document.getElementById('readout').textContent='center:['+c.lng.toFixed(4)+','+c.lat.toFixed(4)+']  zoom:'+map.getZoom().toFixed(2);}
+</script></body></html>
