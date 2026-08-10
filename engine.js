@@ -272,7 +272,7 @@ window.Holiscope=function(CFG){
           geometry:{type:'LineString',coordinates:co}});}
       if(!landed){
         planes.push({type:'Feature',properties:{b:(p.hdg-90+360)%360,c:f.col,
-          s:f.hero?30:20},geometry:{type:'Point',coordinates:[p.lon,p.lat]}});
+          s:f.hero?40:32},geometry:{type:'Point',coordinates:[p.lon,p.lat]}});
         if(wantLabel(f))labels.push({type:'Feature',
           properties:{t:f.label,c:(f.hero?'#BBDEFB':f.col),sz:f.hero?14:11},
           geometry:{type:'Point',coordinates:[p.lon,p.lat]}});
@@ -296,7 +296,7 @@ window.Holiscope=function(CFG){
     if(currentT>=VIDEO_LEN){currentT=VIDEO_LEN;playing=false;el2('hplay','\u25B6');}
     if(currentT<0)currentT=0;render(currentT);if(playing)requestAnimationFrame(loop);}
   function el2(id,h){var e=document.getElementById(id);if(e)e.innerHTML=h;}
-  function setRate(r){RATE=r;el('hsp',r+'x');
+  function setRate(r){RATE=r;el('hsp',(C.window?Math.round((WT-WF)/VIDEO_LEN*RATE):RATE)+'x real time');
     var b=document.getElementsByClassName('hrb');
     for(var i=0;i<b.length;i++){b[i].style.background=(parseFloat(b[i].getAttribute('data-r'))===r)?'#4DABF7':'#2a2f3a';}}
   function play(){playing=!playing;el2('hplay',playing?'\u2759\u2759':'\u25B6');
