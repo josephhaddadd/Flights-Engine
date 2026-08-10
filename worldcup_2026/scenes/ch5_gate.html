@@ -2,9 +2,14 @@
 <html>
 <head><meta charset="utf-8"><title>Ch5 gate</title></head>
 <body>
-../scenes_data/teb_day.js
-../../../engine.js
 <script>
+document.write('<scr'+'es_data/teb_day.js</scr'+'ipt>');
+</script>
+<script>
+document.write('../../../engine.js</scr'+'ipt>');
+</script>
+<script>
+window.addEventListener('load', function(){
 Holiscope({
   style : "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
   token : "pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
@@ -31,6 +36,7 @@ Holiscope({
     { center:[-74.0745,40.8135], radius_nm:3, label:"NO-FLY ZONE", color:"#FF3B30" }
   ],
   show : { clock:true, counters:true, zones:true, placeLabels:true }
+});
 });
 </script>
 </body>
