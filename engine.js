@@ -194,7 +194,7 @@ window.Holiscope=function(CFG){
         map.addLayer({id:'vd',type:'circle',source:'venue',
           paint:{'circle-radius':5,'circle-color':'#FF3B30','circle-stroke-width':2,'circle-stroke-color':'#fff'}});
         if(S.placeLabels)map.addLayer({id:'vl',type:'symbol',source:'venue',
-          layout:{'text-field':['get','n'],'text-size':14,'text-offset':[0,1.4]text-anchor':'top',
+          layout:{'text-field':['get','n'],'text-size':11,'text-offset':[0,1.4],'text-anchor':'top',
                   'text-allow-overlap':true,'text-ignore-placement':true},
           paint:{'text-color':'#FF6B6B','text-halo-color':'rgba(0,0,0,.85)','text-halo-width':1.2}});
       }
