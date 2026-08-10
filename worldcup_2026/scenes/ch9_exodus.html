@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Ch9 the exodus</title></head>
+<body>
+<script>
+(function(){
+  var d=document.createElement('script');
+  d.src='../scenes_data/teb_day.js';
+  d.onload=function(){
+    var e=document.createElement('script');
+    e.src='../../engine.js';
+    e.onload=go;
+    e.onerror=function(){document.body.innerHTML='<p style="color:#fff;padding:20px">engine.js failed to load.</p>';};
+    document.body.appendChild(e);
+  };
+  d.onerror=function(){document.body.innerHTML='<p style="color:#fff;padding:20px">teb_day.js failed to load.</p>';};
+  document.body.appendChild(d);
+  function go(){
+    Holiscope({
+      style : "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
+      token : "pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
+      length : "0:40",
+      window : ["20:00","24:00"],
+      dateEpoch : 1784419200,
+      dateLabel : "Sunday 19 July 2026",
+      utcOffset : -4,
+      camera : [-74.0371, 40.7728, 9.93],
+      colour : "by_direction",
+      labels : "departures",
+      trails : "none",
+      vanish : true,
+      places : [
+        { name:"Teterboro", at:[-74.0608,40.8501], style:"airport" },
+        { name:"Newark", at:[-74.1687,40.6895], style:"airport" },
+        { name:"LaGuardia", at:[-73.8740,40.7769], style:"airport" },
+        { name:"JFK", at:[-73.7781,40.6413], style:"airport" },
+        { name:"Westchester", at:[-73.7076,41.0670], style:"airport" },
+        { name:"Morristown", at:[-74.4149,40.7994], style:"airport" },
+        { name:"MetLife Stadium", at:[-74.0745,40.8135], style:"venue" }
+      ],
+      zones : [],
+      show : { clock:true, counters:true, zones:false, placeLabels:true }
+    });
+  }
+})();
+</script>
+</body>
+</html>
