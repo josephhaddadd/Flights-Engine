@@ -30,6 +30,7 @@ window.Holiscope=function(CFG){
     colour:CFG.colour||"by_direction",   // by_direction | per_flight | plain
     highlight:CFG.highlight||[],         // callsigns to emphasise
     trails:CFG.trails||"highlight",      // all | highlight | none
+    labels:CFG.labels||"highlight",
     vanish:(CFG.vanish==null?true:CFG.vanish),
     goneAlt:CFG.goneAlt||150,            // metres
     places:CFG.places||[],
@@ -241,7 +242,7 @@ window.Holiscope=function(CFG){
         var h0=a[4],h1=b[4],dh=((h1-h0+540)%360)-180;
         return {lon:a[2]+(b[2]-a[2])*u,lat:a[1]+(b[1]-a[1])*u,alt:a[3]+(b[3]-a[3])*u,hdg:(h0+dh*u+360)%360};}}
     return null;}
-
+  function wantLabel(f){ if(f.hero)return true; if(C.labels==="all")return true; if(C.labels==="arrivals")return !f.dep; if(C.labels==="departures")return f.dep; return false; }
   function render(vt){
     if(!ready)return;
     var planes=[],trails=[],labels=[],na=0,nd=0,followPos=null;
@@ -272,7 +273,7 @@ window.Holiscope=function(CFG){
       if(!landed){
         planes.push({type:'Feature',properties:{b:(p.hdg-90+360)%360,c:f.col,
           s:f.hero?30:20},geometry:{type:'Point',coordinates:[p.lon,p.lat]}});
-        if(S.flightLabels||f.hero)labels.push({type:'Feature',
+        if(wantLabel(f))labels.push({type:'Feature',
           properties:{t:f.label,c:(f.hero?'#BBDEFB':f.col),sz:f.hero?14:11},
           geometry:{type:'Point',coordinates:[p.lon,p.lat]}});
       }
