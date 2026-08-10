@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Ch5 holds</title></head>
+<body>
+<script>
+(function(){
+  var d=document.createElement('script');
+  d.src='../scenes_data/holds.js';
+  d.onload=function(){
+    var e=document.createElement('script');
+    e.src='../../engine.js';
+    e.onload=go;
+    document.body.appendChild(e);
+  };
+  document.body.appendChild(d);
+  function go(){
+    Holiscope({
+      style : "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
+      token : "pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
+      length : "0:50",
+      mode : "drawin",
+      stagger : 8,
+      draw : 10,
+      camera : [-72.8676, 41.3641, 7.79],
+      colour : "per_flight",
+      labels : "all",
+      trails : "all",
+      vanish : false,
+      places : [
+        { name:"Teterboro", at:[-74.0608,40.8501], style:"airport" },
+        { name:"Newark", at:[-74.1687,40.6895], style:"airport" },
+        { name:"Westchester", at:[-73.7076,41.0670], style:"airport" },
+        { name:"Stewart", at:[-74.1048,41.5041], style:"airport" },
+        { name:"Boston", at:[-71.0096,42.3656], style:"airport" },
+        { name:"MetLife Stadium", at:[-74.0745,40.8135], style:"venue" }
+      ],
+      zones : [],
+      show : { clock:false, counters:false, placeLabels:true, legend:true }
+    });
+  }
+})();
+</script>
+</body>
+</html>
