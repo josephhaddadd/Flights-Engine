@@ -152,7 +152,7 @@ window.Holiscope=function(CFG){
     for(var i=0;i<LIST.length;i++){
       var f=LIST[i],tk=f.tk,Tf;
       if(C.mode==="drawin"){if(vt<f.start)continue;var pr=Math.min(1,(vt-f.start)/f.draw);Tf=tk[0][0]+pr*(tk[tk.length-1][0]-tk[0][0]);}else{Tf=Treal;}
-      if(C.window){var mark=f.dep?tk[0]tk[tk.length-1][0];if(mark>=WF&&mark<=Tf){if(f.dep)nd++;else na++;}}
+     if(C.window){var mark=f.dep?tk[0][0]:tk[tk.length-1][0];if(mark>=WF&&mark<=Tf){if(f.dep)nd++;else na++;}}
       var p=posAt(tk,Tf);
       if(!p)continue;
       if(C.follow===f.id||C.follow===f.label)followPos=[p.lon,p.lat];
