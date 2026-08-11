@@ -3,58 +3,20 @@
 <head>
   <meta charset="utf-8">
   <title>CH0 03 Consequence Tease</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #000;
-      overflow: hidden;
-    }
-
-    #note {
-      position: absolute;
-      right: 28px;
-      bottom: 78px;
-      z-index: 20;
-      max-width: 390px;
-      padding: 10px 13px;
-      border-radius: 12px;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 12px;
-      line-height: 1.35;
-      color: rgba(255,255,255,0.78);
-      background: rgba(0,0,0,0.58);
-      border: 1px solid rgba(255,255,255,0.14);
-      pointer-events: none;
-    }
-
-    #note b {
-      color: #ffd43b;
-    }
-  </style>
 </head>
 
 <body>
-<div id="note">
-  <b>Cold open recreation.</b> Holding, diversion and escort paths are synthetic previews. Real evidence comes later.
-</div>
-
 <script>
-/*
-  CHAPTER 0 - SHOT 3
-  Synthetic visual teaser only.
-  Shows holding, diversions, and a military escort/intercept path on the actual map.
-*/
-
 var B = 1784476800;
 
 var FLIGHTS = {
-  HOLD001: {
-    callsign: "HOLD001",
+  HOLD_1: {
+    callsign: "HOLD_1",
     kind: "ARR",
     track: [
-      [B+0,   41.18, -74.55, 1800, 70],
-      [B+90,  41.34, -74.25, 1800, 35],
+      [[
+B+0,   41.18, -74.55, 1800, 70],
+    [B+90,  41.34, -74.25, 1800, 35],
       [B+180, 41.25, -73.94, 1800, 110],
       [B+270, 41.05, -74.05, 1800, 205],
       [B+360, 41.04, -74.36, 1800, 285],
@@ -64,8 +26,8 @@ var FLIGHTS = {
     ]
   },
 
-  HOLD002: {
-    callsign: "HOLD002",
+  HOLD_2: {
+    callsign: "HOLD_2",
     kind: "ARR",
     track: [
       [B+40,  40.90, -73.58, 2100, 80],
@@ -79,19 +41,20 @@ var FLIGHTS = {
     ]
   },
 
-  DIVERT001: {
-    callsign: "DIVERT001",
+  DIVERT_1: {
+    callsign: "DIVERT_1",
     kind: "ARR",
     track: [
-      [B+70,  40.80, -74.22, 1600, 65],
-      [B+210, 41.02, -73.78, 1700, 55],
+      [[
+B+70,  40.80, -74.22, 1600, 65],
+    [B+210, 41.02, -73.78, 1700, 55],
       [B+360, 41.32, -73.12, 1800, 70],
       [B+540, 41.74, -72.68, 1200, 82]
     ]
   },
 
-  DIVERT002: {
-    callsign: "DIVERT002",
+  DIVERT_2: {
+    callsign: "DIVERT_2",
     kind: "ARR",
     track: [
       [B+95,  40.70, -74.12, 1500, 310],
@@ -101,30 +64,91 @@ var FLIGHTS = {
     ]
   },
 
-  DIVERT003: {
-    callsign: "DIVERT003",
+  CIVILIAN: {
+    callsign: "CIVILIAN",
     kind: "ARR",
     track: [
-      [B+120, 40.55, -73.72, 1500, 250],
-      [B+260, 40.42, -74.12, 1700, 245],
-      [B+420, 40.22, -74.55, 1900, 245],
-      [B+590, 39.88, -75.24, 1100, 235]
-    ]
-  },
-
-  CIVILIAN001: {
-    callsign: "CIVILIAN001",
-    kind: "ARR",
-    track: [
-      [B+230, 41.15, -74.70, 1500, 110],
-      [B+360, 41.02, -74.30, 1500, 110],
+      [[
+B+230, 41.15, -74.70, 1500, 110],     [B+360, 41.02, -74.30, 1500, 110],
       [B+500, 40.92, -73.85, 1500, 112],
       [B+700, 40.88, -73.45, 1500, 115]
     ]
   },
 
-  MIL_ESCORT: {
-    callsign: "SYNTHETIC ESCORT",
+  ESCORT: {
+    callsign: "ESCORT",
     kind: "DEP",
-    label: "SYNTHETIC ESCORT",
     track: [
+      [B+230, 40.55, -74.95, 2500, 65],
+      [B+360, 40.80, -74.42, 2500, 65],
+      [B+500, 40.95, -73.92, 2500, 75],
+      [B+700, 40.90, -73.48, 2500, 90]
+    ]
+  }
+};
+</script>
+
+<script>
+(function(){
+  var e = document.createElement('script');
+  e.src = '../../engine.js';
+
+  e.onload = function(){
+    Holiscope({
+      style : "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
+      token : "pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
+
+      length : "0:13",
+
+      window : ["12:00", "12:20"],
+      dateEpoch : 1784419200,
+      dateLabel : "Sunday 19 July 2026",
+      utcOffset : -4,
+
+      camera : [-74.05, 41.02, 7.35],
+
+      colour : "per_flight",
+      highlight : ["ESCORT", "CIVILIAN"],
+
+      labels : "none",
+      trails : "all",
+      vanish : false,
+
+      places : [
+        { name:"MetLife Stadium", at:[-74.0745,40.8135], style:"venue" },
+        { name:"Teterboro", at:[-74.0608,40.8501], style:"airport" },
+        { name:"Newark", at:[-74.1687,40.6895], style:"airport" },
+        { name:"Westchester", at:[-73.7076,41.0670], style:"airport" },
+        { name:"Stewart", at:[-74.1048,41.5041], style:"airport" },
+        { name:"Hartford", at:[-72.6832,41.9389], style:"airport" },
+        { name:"Philadelphia", at:[-75.2411,39.8744], style:"airport" }
+      ],
+
+      zones : [
+        {
+          center:[-74.0745,40.8135],
+          radius_nm:10,
+          color:"#FF3B30",
+          label:"RESTRICTED AIRSPACE"
+        }
+      ],
+
+      show : {
+        clock:true,
+        counters:false,
+        zones:true,
+        placeLabels:true,
+        legend:false
+      }
+    });
+  };
+
+  e.onerror = function(){
+    document.body.innerHTML = '<p style="color:#fff;background:#000;padding:20px;font-family:Arial">engine.js failed to load.</p>';
+  };
+
+  document.body.appendChild(e);
+})();
+</script>
+</body>
+</html>
