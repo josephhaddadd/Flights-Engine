@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CH0 01 Wide Zone Swarm</title>
+</head>
+<body>
+<script>
+(function(){
+  var d=document.createElement('script');
+
+  /*
+    Synthetic cold-open swarm.
+    This is not evidence data.
+    It is a visual establishing shot.
+  */
+  d.src='../scenes_data/ch0_swarm_data.js';
+
+  d.onload=function(){
+    var e=document.createElement('script');
+    e.src='../../engine.js';
+    e.onload=go;
+    e.onerror=function(){
+      document.body.innerHTML='<p style="color:#fff;padding:20px">engine.js failed to load.</p>';
+    };
+    document.body.appendChild(e);
+  };
+
+  d.onerror=function(){
+    document.body.innerHTML='<p style="color:#fff;padding:20px">ch0_swarm_data.js failed to load. Check the file name and folder.</p>';
+  };
+
+  document.body.appendChild(d);
+
+  function go(){
+    Holiscope({
+      style : "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
+      token : "pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
+
+      /*
+        Short cold-open shot.
+        Record this and cut it into CapCut.
+      */
+      length : "0:14",
+
+      /*
+        Synthetic time window.
+        The clock is optional here.
+        You can hide it with T while recording.
+      */
+      window : ["12:00","12:20"],
+      dateEpoch : 1784419200,
+      dateLabel : "Sunday 19 July 2026",
+      utcOffset : -4,
+
+      /*
+        Your requested camera.
+      */
+      camera : [-73.9519, 40.7480, 9.82],
+
+      /*
+        Lots of visual motion.
+      */
+      colour : "by_direction",
+      labels : "none",
+      trails : "all",
+      vanish : false,
+
+      places : [
+        { name:"MetLife Stadium", at:[-74.0745,40.8135], style:"venue" },
+        { name:"Teterboro", at:[-74.0608,40.8501], style:"airport" },
+        { name:"Newark", at:[-74.1687,40.6895], style:"airport" },
+        { name:"LaGuardia", at:[-73.8740,40.7769], style:"airport" },
+        { name:"JFK", at:[-73.7781,40.6413], style:"airport" },
+        { name:"Westchester", at:[-73.7076,41.0670], style:"airport" },
+        { name:"Morristown", at:[-74.4149,40.7994], style:"airport" }
+      ],
+
+      /*
+        First wide zone shot.
+        Shows the restriction context immediately.
+      */
+      zones : [
+        {
+          center:[-74.0745,40.8135],
+          radius_nm:3,
+          color:"#FF3B30",
+          label:"STADIUM TFR"
+        },
+        {
+          center:[-74.0745,40.8135],
+          radius_nm:10,
+          color:"#FF3B30",
+          label:"RESTRICTED AIRSPACE"
+        }
+      ],
+
+      show : {
+        clock:true,
+        counters:false,
+        zones:true,
+        placeLabels:true,
+        legend:false
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
