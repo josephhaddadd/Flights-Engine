@@ -1,153 +1,53 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>CH0 03 Consequence Tease</title>
-</head>
-
+<head><meta charset="utf-8"><title>CH0 03 Consequence Tease</title></head>
 <body>
 <script>
-var B = 1784476800;
-
-var FLIGHTS = {
-  HOLD_1: {
-    callsign: "HOLD_1",
-    kind: "ARR",
-    track: [
-      [[
-B+0,   41.18, -74.55, 1800, 70],
-    [B+90,  41.34, -74.25, 1800, 35],
-      [B+180, 41.25, -73.94, 1800, 110],
-      [B+270, 41.05, -74.05, 1800, 205],
-      [B+360, 41.04, -74.36, 1800, 285],
-      [B+450, 41.18, -74.55, 1800, 70],
-      [B+620, 41.34, -74.25, 1800, 35],
-      [B+790, 41.25, -73.94, 1800, 110]
-    ]
-  },
-
-  HOLD_2: {
-    callsign: "HOLD_2",
-    kind: "ARR",
-    track: [
-      [B+40,  40.90, -73.58, 2100, 80],
-      [B+130, 41.04, -73.28, 2100, 30],
-      [B+220, 40.94, -72.98, 2100, 120],
-      [B+310, 40.75, -73.12, 2100, 210],
-      [B+400, 40.78, -73.44, 2100, 300],
-      [B+490, 40.90, -73.58, 2100, 80],
-      [B+660, 41.04, -73.28, 2100, 30],
-      [B+820, 40.94, -72.98, 2100, 120]
-    ]
-  },
-
-  DIVERT_1: {
-    callsign: "DIVERT_1",
-    kind: "ARR",
-    track: [
-      [[
-B+70,  40.80, -74.22, 1600, 65],
-    [B+210, 41.02, -73.78, 1700, 55],
-      [B+360, 41.32, -73.12, 1800, 70],
-      [B+540, 41.74, -72.68, 1200, 82]
-    ]
-  },
-
-  DIVERT_2: {
-    callsign: "DIVERT_2",
-    kind: "ARR",
-    track: [
-      [B+95,  40.70, -74.12, 1500, 310],
-      [B+230, 40.94, -74.45, 1700, 315],
-      [B+390, 41.26, -74.72, 1900, 330],
-      [B+560, 41.50, -74.10, 1200, 75]
-    ]
-  },
-
-  CIVILIAN: {
-    callsign: "CIVILIAN",
-    kind: "ARR",
-    track: [
-      [[
-B+230, 41.15, -74.70, 1500, 110],     [B+360, 41.02, -74.30, 1500, 110],
-      [B+500, 40.92, -73.85, 1500, 112],
-      [B+700, 40.88, -73.45, 1500, 115]
-    ]
-  },
-
-  ESCORT: {
-    callsign: "ESCORT",
-    kind: "DEP",
-    track: [
-      [B+230, 40.55, -74.95, 2500, 65],
-      [B+360, 40.80, -74.42, 2500, 65],
-      [B+500, 40.95, -73.92, 2500, 75],
-      [B+700, 40.90, -73.48, 2500, 90]
-    ]
-  }
+var B=1784476800;
+var FLIGHTS={
+HOLD1:{callsign:"HOLD1",kind:"ARR",track:[[B+0,41.18,-74.55,1800,70],[B+90,41.34,-74.25,1800,35],[B+180,41.25,-73.94,1800,110],[B+270,41.05,-74.05,1800,205],[B+360,41.04,-74.36,1800,285],[B+450,41.18,-74.55,1800,70],[B+620,41.34,-74.25,1800,35],[B+790,41.25,-73.94,1800,110]]},
+HOLD2:{callsign:"HOLD2",kind:"ARR",track:[[B+40,40.90,-73.58,2100,80],[B+130,41.04,-73.28,2100,30],[B+220,40.94,-72.98,2100,120],[B+310,40.75,-73.12,2100,210],[B+400,40.78,-73.44,2100,300],[B+490,40.90,-73.58,2100,80],[B+660,41.04,-73.28,2100,30],[B+820,40.94,-72.98,2100,120]]},
+DIVERT1:{callsign:"DIVERT1",kind:"ARR",track:[[B+70,40.80,-74.22,1600,65],[B+210,41.02,-73.78,1700,55],[B+360,41.32,-73.12,1800,70],[B+540,41.74,-72.68,1200,82]]},
+DIVERT2:{callsign:"DIVERT2",kind:"ARR",track:[[B+95,40.70,-74.12,1500,310],[B+230,40.94,-74.45,1700,315],[B+390,41.26,-74.72,1900,330],[B+560,41.50,-74.10,1200,75]]},
+CIVILIAN:{callsign:"CIVILIAN",kind:"ARR",track:[[B+230,41.15,-74.70,1500,110],[B+360,41.02,-74.30,1500,110],[B+500,40.92,-73.85,1500,112],[B+700,40.88,-73.45,1500,115]]},
+ESCORT:{callsign:"ESCORT",kind:"DEP",track:[[B+230,40.55,-74.95,2500,65],[B+360,40.80,-74.42,2500,65],[B+500,40.95,-73.92,2500,75],[B+700,40.90,-73.48,2500,90]]}
 };
 </script>
 
 <script>
 (function(){
-  var e = document.createElement('script');
-  e.src = '../../engine.js';
-
-  e.onload = function(){
-    Holiscope({
-      style : "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
-      token : "pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
-
-      length : "0:13",
-
-      window : ["12:00", "12:20"],
-      dateEpoch : 1784419200,
-      dateLabel : "Sunday 19 July 2026",
-      utcOffset : -4,
-
-      camera : [-74.05, 41.02, 7.35],
-
-      colour : "per_flight",
-      highlight : ["ESCORT", "CIVILIAN"],
-
-      labels : "none",
-      trails : "all",
-      vanish : false,
-
-      places : [
-        { name:"MetLife Stadium", at:[-74.0745,40.8135], style:"venue" },
-        { name:"Teterboro", at:[-74.0608,40.8501], style:"airport" },
-        { name:"Newark", at:[-74.1687,40.6895], style:"airport" },
-        { name:"Westchester", at:[-73.7076,41.0670], style:"airport" },
-        { name:"Stewart", at:[-74.1048,41.5041], style:"airport" },
-        { name:"Hartford", at:[-72.6832,41.9389], style:"airport" },
-        { name:"Philadelphia", at:[-75.2411,39.8744], style:"airport" }
-      ],
-
-      zones : [
-        {
-          center:[-74.0745,40.8135],
-          radius_nm:10,
-          color:"#FF3B30",
-          label:"RESTRICTED AIRSPACE"
-        }
-      ],
-
-      show : {
-        clock:true,
-        counters:false,
-        zones:true,
-        placeLabels:true,
-        legend:false
-      }
-    });
-  };
-
-  e.onerror = function(){
-    document.body.innerHTML = '<p style="color:#fff;background:#000;padding:20px;font-family:Arial">engine.js failed to load.</p>';
-  };
-
-  document.body.appendChild(e);
+var e=document.createElement('script');
+e.src='../../engine.js';
+e.onload=function(){
+Holiscope({
+style:"mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
+token:"pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
+length:"0:13",
+window:["12:00","12:20"],
+dateEpoch:1784419200,
+dateLabel:"Sunday 19 July 2026",
+utcOffset:-4,
+camera:[-74.05,41.02,7.35],
+colour:"per_flight",
+highlight:["ESCORT","CIVILIAN"],
+labels:"none",
+trails:"all",
+vanish:false,
+places:[
+{name:"MetLife Stadium",at:[-74.0745,40.8135],style:"venue"},
+{name:"Teterboro",at:[-74.0608,40.8501],style:"airport"},
+{name:"Newark",at:[-74.1687,40.6895],style:"airport"},
+{name:"Westchester",at:[-73.7076,41.0670],style:"airport"},
+{name:"Stewart",at:[-74.1048,41.5041],style:"airport"},
+{name:"Hartford",at:[-72.6832,41.9389],style:"airport"},
+{name:"Philadelphia",at:[-75.2411,39.8744],style:"airport"}
+],
+zones:[{center:[-74.0745,40.8135],radius_nm:10,color:"#FF3B30",label:"RESTRICTED AIRSPACE"}],
+show:{clock:true,counters:false,zones:true,placeLabels:true,legend:false}
+});
+};
+e.onerror=function(){document.body.innerHTML='<p style="color:#fff;background:#000;padding:20px;font-family:Arial">engine.js failed to load.</p>';};
+document.body.appendChild(e);
 })();
 </script>
 </body>
