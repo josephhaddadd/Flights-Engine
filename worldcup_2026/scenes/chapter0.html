@@ -1,1078 +1,140 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <title>Chapter 0 - The One-Way Gate</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.jsscript>
-  https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.css
-
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #05080d;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: Inter, Arial, Helvetica, sans-serif;
-      color: white;
-    }
-
-    #map {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      background: #05080d;
-    }
-
-    #vignette {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%),
-        linear-gradient(to bottom, rgba(0,0,0,0.28), rgba(0,0,0,0) 30%, rgba(0,0,0,0.5) 100%);
-      z-index: 5;
-    }
-
-    #hud {
-      position: absolute;
-      top: 28px;
-      left: 36px;
-      z-index: 20;
-      max-width: 760px;
-      pointer-events: none;
-    }
-
-    #chapter {
-      font-size: 13px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.68);
-      margin-bottom: 12px;
-      font-weight: 700;
-    }
-
-    #caption {
-      font-size: 42px;
-      line-height: 1.05;
-      font-weight: 800;
-      color: #ffffff;
-      text-shadow: 0 10px 34px rgba(0,0,0,0.75);
-      max-width: 920px;
-    }
-
-    #subcaption {
-      margin-top: 14px;
-      font-size: 18px;
-      line-height: 1.35;
-      color: rgba(255,255,255,0.78);
-      max-width: 720px;
-      text-shadow: 0 8px 24px rgba(0,0,0,0.75);
-    }
-
-    #clock {
-      position: absolute;
-      top: 30px;
-      right: 36px;
-      z-index: 20;
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: rgba(255,255,255,0.78);
-      background: rgba(7,12,20,0.58);
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 12px;
-      padding: 10px 14px;
-      backdrop-filter: blur(10px);
-      pointer-events: none;
-    }
-
-    #stats {
-      position: absolute;
-      left: 36px;
-      bottom: 34px;
-      z-index: 20;
-      display: flex;
-      gap: 12px;
-      align-items: stretch;
-      pointer-events: none;
-    }
-
-    .stat-card {
-      min-width: 142px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: rgba(7,12,20,0.62);
-      border: 1px solid rgba(255,255,255,0.15);
-      backdrop-filter: blur(14px);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.26);
-    }
-
-    .stat-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: rgba(255,255,255,0.56);
-      margin-bottom: 7px;
-      font-weight: 800;
-    }
-
-    .stat-value {
-      font-size: 30px;
-      font-weight: 900;
-      color: #ffffff;
-      line-height: 1;
-    }
-
-    .stat-note {
-      margin-top: 6px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.62);
-    }
-
-    #documentCard {
-      position: absolute;
-      right: 38px;
-      bottom: 34px;
-      width: 430px;
-      z-index: 25;
-      display: none;
-      background: rgba(245, 247, 250, 0.94);
-      color: #111827;
-      border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 22px 70px rgba(0,0,0,0.42);
-      pointer-events: none;
-    }
-
-    #documentCard .doc-kicker {
-      font-size: 12px;
-      letter-spacing: 0.16em;
-      font-weight: 900;
-      color: #6b7280;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
-    #documentCard .doc-title {
-      font-size: 22px;
-      font-weight: 900;
-      color: #111827;
-      margin-bottom: 16px;
-    }
-
-    #documentCard .doc-line {
-      font-family: "Courier New", monospace;
-      font-size: 14px;
-      line-height: 1.45;
-      padding: 5px 0;
-      border-bottom: 1px solid rgba(0,0,0,0.08);
-    }
-
-    #documentCard .highlight {
-      color: #b91c1c;
-      font-weight: 900;
-      background: rgba(255, 216, 0, 0.32);
-      padding: 1px 3px;
-      border-radius: 3px;
-    }
-
-    #titleCard {
-      position: absolute;
-      inset: 0;
-      z-index: 40;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      background: radial-gradient(circle at center, rgba(5,8,13,0.25), rgba(5,8,13,0.92) 72%);
-      pointer-events: none;
-    }
-
-    #titleCard h1 {
-      margin: 0;
-      font-size: 76px;
-      letter-spacing: 0.02em;
-      line-height: 0.95;
-      font-weight: 950;
-      text-shadow: 0 18px 50px rgba(0,0,0,0.8);
-    }
-
-    #titleCard p {
-      margin: 18px 0 0;
-      font-size: 21px;
-      color: rgba(255,255,255,0.76);
-      font-weight: 600;
-    }
-
-    .plane {
-      width: 0;
-      height: 0;
-      border-left: 7px solid transparent;
-      border-right: 7px solid transparent;
-      border-bottom: 18px solid #74c0fc;
-      filter: drop-shadow(0 0 8px rgba(116,192,252,0.95));
-      transform-origin: 50% 50%;
-      transition: opacity 350ms linear;
-    }
-
-    .plane.highlight {
-      border-bottom-color: #ffd43b;
-      filter: drop-shadow(0 0 12px rgba(255,212,59,1));
-    }
-
-    .plane.dim {
-      opacity: 0.18;
-    }
-
-    .plane.hidden {
-      opacity: 0;
-    }
-
-    .airport-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.22), 0 0 18px rgba(255,255,255,0.9);
-    }
-
-    .stadium-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #ff453a;
-      box-shadow: 0 0 0 4px rgba(255,69,58,0.2), 0 0 26px rgba(255,69,58,1);
-      animation: pulse 1.3s infinite ease-out;
-    }
-
-    .pulse-dot {
-      animation: pulse 1.2s infinite ease-out;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(0.95); opacity: 1; }
-      70% { transform: scale(1.55); opacity: 0.65; }
-      100% { transform: scale(0.95); opacity: 1; }
-    }
-
-    .mapboxgl-popup-content {
-      background: rgba(8, 13, 22, 0.82);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 800;
-      box-shadow: 0 12px 35px rgba(0,0,0,0.35);
-      padding: 7px 9px;
-    }
-
-    .mapboxgl-popup-tip {
-      border-top-color: rgba(8, 13, 22, 0.82) !important;
-    }
-
-    #warning {
-      position: absolute;
-      left: 50%;
-      bottom: 24px;
-      transform: translateX(-50%);
-      z-index: 60;
-      color: rgba(255,255,255,0.78);
-      background: rgba(0,0,0,0.55);
-      border: 1px solid rgba(255,255,255,0.14);
-      padding: 10px 13px;
-      border-radius: 12px;
-      font-size: 12px;
-      display: none;
-      pointer-events: none;
-    }
-  </style>
+  <meta charset="utf-8">
+  <title>Chapter 0 - Cold Open</title>
 </head>
-
 <body>
-  <div id="map"></div>
-  <div id="vignette"></div>
+<script>
+(function(){
 
-  <div id="hud">
-    <div id="chapter">Chapter 0 · Cold Open</div>
-    <div id="caption">What happens when this sky has to shut down?</div>
-    <div id="subcaption">New York airspace on World Cup Final day.</div>
-  </div>
+  /*
+    CHAPTER 0 - COLD OPEN
+    Purpose:
+    Wide New York airspace preview.
+    Normal circulation -> restriction context -> Teterboro becomes the focus.
 
-  <div id="clock">00:00</div>
+    This uses the SAME engine pattern as your working Chapter 4 file.
+    No new Mapbox imports.
+    No separate token hunting.
+    No experimental standalone code.
+  */
 
-  <div id="stats">
-    <div class="stat-card">
-      <div class="stat-label">Visible aircraft</div>
-      <div class="stat-value" id="statVisible">0</div>
-      <div class="stat-note">compressed preview</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Focus</div>
-      <div class="stat-value" id="statFocus">NYC</div>
-      <div class="stat-note">metro airspace</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Restriction</div>
-      <div class="stat-value" id="statTfr">OFF</div>
-      <div class="stat-note">TFR preview</div>
-    </div>
-  </div>
+  var d = document.createElement('script');
 
-  <div id="documentCard">
-    <div class="doc-kicker">FAA traffic management order</div>
-    <div class="doc-title">ATCSCC ADVZY 172 · TEB</div>
-    <div class="doc-line">GROUND STOP PERIOD: 19/2010Z - 19/2230Z</div>
-    <div class="doc-line">IMPACTING CONDITION: <span class="highlight">OTHER / SECURITY</span></div>
-    <div class="doc-line">COMMENTS: <span class="highlight">DUE TO TFR</span>.</div>
-    <div class="doc-line"><span class="highlight">GATEWAY AIRPORTS PHL AND ABE EXEMPT</span>.</div>
-  </div>
+  // Same data source as Chapter 4.
+  // This should show the Final Day traffic around Teterboro / NYC.
+  d.src = '../scenes_data/teb_day.js';
 
-  <div id="titleCard">
-    <div>
-      <h1>THE ONE-WAY GATE</h1>
-      <p>How the World Cup Final changed the sky over New York</p>
-    </div>
-  </div>
-
-  <div id="warning">
-    Military intercept marker is a disclosed synthetic recreation. Fighter tracks do not appear in civilian flight data.
-  </div>
-
-  <script>
-    /*
-      CHAPTER 0 - COLD OPEN
-      Standalone GitHub HTML.
-
-      What this does:
-      1. Loads existing flight data files if they are in the same folder.
-      2. Animates a compressed preview of NYC airspace.
-      3. Shows MetLife TFR.
-      4. Fades aircraft to suggest shutdown.
-      5. Previews diversions.
-      6. Shows FAA order card.
-      7. Shows disclosed synthetic intercept marker.
-      8. Ends on THE ONE-WAY GATE title card.
-
-      Important:
-      This is a cold-open montage. It compresses time for storytelling.
-      The aircraft tracks are real if the files loaded are real.
-      The timing is not meant to be a real-time reconstruction.
-    */
-
-    const MAPBOX_TOKEN = "PASTE_YOUR_MAPBOX_TOKEN_HERE";
-
-    const MAPBOX_STYLE = "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r";
-
-    const DATA_FILES = [
-      "teb_rush.js",
-      "teb_gate.js",
-      "teb_release.js",
-      "holds.js"
-    ];
-
-    const NYC_CENTER = [-74.15, 40.72];
-    const METLIFE = [-74.0745, 40.8135];
-    const TEB = [-74.0608, 40.8501];
-    const EWR = [-74.1745, 40.6895];
-    const LGA = [-73.8740, 40.7769];
-    const JFK = [-73.7781, 40.6413];
-    const MMU = [-74.4149, 40.7994];
-    const HPN = [-73.7076, 41.0669];
-    const SWF = [-74.1048, 41.5041];
-    const BOS = [-71.0052, 42.3656];
-
-    const FOCUS_FLIGHTS = ["UAL963", "AUA3VG", "RPA3435", "AXY252W", "EJA165"];
-
-    const STATE = {
-      flights: {},
-      selectedIds: [],
-      markers: new Map(),
-      trailSources: new Set(),
-      startMs: null,
-      durationSec: 45,
-      paused: false,
-      scene: "wide",
-      frameId: null
+  d.onload = function(){
+    var e = document.createElement('script');
+    e.src = '../../engine.js';
+    e.onload = go;
+    e.onerror = function(){
+      document.body.innerHTML =
+        '<p style="color:#fff;padding:20px;background:#000;font-family:Arial">engine.js failed to load.</p>';
     };
+    document.body.appendChild(e);
+  };
 
-    const caption = document.getElementById("caption");
-    const subcaption = document.getElementById("subcaption");
-    const clock = document.getElementById("clock");
-    const statVisible = document.getElementById("statVisible");
-    const statFocus = document.getElementById("statFocus");
-    const statTfr = document.getElementById("statTfr");
-    const documentCard = document.getElementById("documentCard");
-    const titleCard = document.getElementById("titleCard");
-    const warning = document.getElementById("warning");
+  d.onerror = function(){
+    document.body.innerHTML =
+      '<p style="color:#fff;padding:20px;background:#000;font-family:Arial">teb_day.js failed to load.</p>';
+  };
 
-    mapboxgl.accessToken = MAPBOX_TOKEN;
+  document.body.appendChild(d);
 
-    const map = new mapboxgl.Map({
-      container: "map",
-      style: MAPBOX_STYLE,
-      center: NYC_CENTER,
-      zoom: 7.55,
-      pitch: 42,
-      bearing: -18,
-      antialias: true
+  function go(){
+
+    Holiscope({
+      style : "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
+
+      token : "pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
+
+      /*
+        Cold open duration.
+        You narrate over this in CapCut.
+      */
+      length : "0:45",
+
+      /*
+        This is intentionally wider than Chapter 4.
+        It shows the day developing, not only the 8am-1pm rush.
+        If this feels too slow, we can tighten it later.
+      */
+      window : ["08:00","20:00"],
+
+      dateEpoch : 1784419200,
+      dateLabel : "Sunday 19 July 2026",
+      utcOffset : -4,
+
+      /*
+        Wide NYC / north New Jersey frame.
+        This gives you JFK, LGA, EWR, TEB, MetLife, Westchester, Morristown.
+      */
+      camera : [-74.10, 40.82, 8.35],
+
+      /*
+        Direction colouring gives movement and visual energy.
+      */
+      colour : "by_direction",
+
+      /*
+        Cold open should not be cluttered.
+      */
+      labels : "none",
+
+      /*
+        Trails make the airspace feel alive.
+        If too cluttered, change this to "none".
+      */
+      trails : "on",
+
+      /*
+        Planes vanish when they leave the selected time window.
+      */
+      vanish : true,
+
+      /*
+        These are the important places for the cold open.
+        The viewer immediately understands the geography.
+      */
+      places : [
+        { name:"MetLife Stadium", at:[-74.0745,40.8135], style:"venue" },
+
+        { name:"Teterboro", at:[-74.0608,40.8501], style:"airport" },
+        { name:"Newark", at:[-74.1687,40.6895], style:"airport" },
+        { name:"LaGuardia", at:[-73.8740,40.7769], style:"airport" },
+        { name:"JFK", at:[-73.7781,40.6413], style:"airport" },
+
+        { name:"Westchester", at:[-73.7076,41.0670], style:"airport" },
+        { name:"Morristown", at:[-74.4149,40.7994], style:"airport" },
+        { name:"Stewart", at:[-74.1048,41.5041], style:"airport" },
+        { name:"Boston", at:[-71.0052,42.3656], style:"airport" },
+        { name:"Philadelphia", at:[-75.2411,39.8744], style:"airport" },
+        { name:"Allentown", at:[-75.4408,40.6521], style:"airport" }
+      ],
+
+      /*
+        IMPORTANT:
+        I am leaving zones empty for this version because I do not yet know
+        the exact zone object format your engine expects.
+        This keeps the file working.
+
+        We can add the red no-fly-zone circle next as a safe engine update
+        once you show me one working scene that already uses zones.
+      */
+      zones : [],
+
+      show : {
+        clock:true,
+        counters:true,
+        zones:false,
+        placeLabels:true
+      }
     });
-
-    map.on("load", async () => {
-      addStaticMapElements();
-      addTfrLayers();
-      addInterceptLayer();
-      await loadAllDataFiles();
-      chooseFlightsForColdOpen();
-      createPlaneMarkers();
-      startAnimation();
-    });
-
-    async function loadAllDataFiles() {
-      const merged = {};
-
-      for (const file of DATA_FILES) {
-        try {
-          const res = await fetch(file, { cache: "no-store" });
-          if (!res.ok) {
-            console.warn("Data file not found:", file);
-            continue;
-          }
-
-          const text = await res.text();
-          const parsed = parseFlightsFromJs(text);
-
-          Object.assign(merged, parsed);
-          console.log("Loaded", Object.keys(parsed).length, "flights from", file);
-        } catch (err) {
-          console.warn("Could not load", file, err);
-        }
-      }
-
-      STATE.flights = merged;
-
-      if (Object.keys(STATE.flights).length === 0) {
-        showNoDataWarning();
-        STATE.flights = buildFallbackPreviewFlights();
-      }
-    }
-
-    function parseFlightsFromJs(text) {
-      /*
-        Supports files that contain:
-        var FLIGHTS = {...};
-        const FLIGHTS = {...};
-        window.FLIGHTS = {...};
-      */
-
-      const patterns = [
-        /var\s+FLIGHTS\s*=\s*(\{[\s\S]*?\});?\s*$/,
-        /const\s+FLIGHTS\s*=\s*(\{[\s\S]*?\});?\s*$/,
-        /let\s+FLIGHTS\s*=\s*(\{[\s\S]*?\});?\s*$/,
-        /window\.FLIGHTS\s*=\s*(\{[\s\S]*?\});?\s*$/
-      ];
-
-      for (const pattern of patterns) {
-        const match = text.match(pattern);
-        if (match && match[1]) {
-          try {
-            return JSON.parse(match[1]);
-          } catch (jsonErr) {
-            try {
-              return Function('"use strict"; return (' + match[1] + ');')();
-            } catch (evalErr) {
-              console.warn("Could not parse FLIGHTS object", evalErr);
-            }
-          }
-        }
-      }
-
-      console.warn("No FLIGHTS object found in file.");
-      return {};
-    }
-
-    function chooseFlightsForColdOpen() {
-      const allIds = Object.keys(STATE.flights);
-
-      const valid = allIds.filter(id => {
-        const f = STATE.flights[id];
-        return f && Array.isArray(f.track) && f.track.length >= 2;
-      });
-
-      const focusAvailable = FOCUS_FLIGHTS.filter(id => valid.includes(id));
-
-      /*
-        For the wide opening, use up to 55 aircraft if available.
-        We force focus flights into the selection so the diversion preview works.
-      */
-      const other = valid.filter(id => !focusAvailable.includes(id));
-      const wide = other.slice(0, 55 - focusAvailable.length);
-
-      STATE.selectedIds = [...focusAvailable, ...wide];
-
-      if (STATE.selectedIds.length === 0) {
-        STATE.flights = buildFallbackPreviewFlights();
-        STATE.selectedIds = Object.keys(STATE.flights);
-      }
-    }
-
-    function createPlaneMarkers() {
-      for (const id of STATE.selectedIds) {
-        const el = document.createElement("div");
-        el.className = "plane";
-        el.dataset.flightId = id;
-
-        const marker = new mapboxgl.Marker({
-          element: el,
-          rotationAlignment: "map",
-          pitchAlignment: "map"
-        })
-        .setLngLat([0, 0])
-        .addTo(map);
-
-        STATE.markers.set(id, marker);
-      }
-    }
-
-    function startAnimation() {
-      STATE.startMs = performance.now();
-      STATE.frameId = requestAnimationFrame(tick);
-    }
-
-    function tick(now) {
-      if (!STATE.startMs) STATE.startMs = now;
-
-      const elapsed = ((now - STATE.startMs) / 1000) % STATE.durationSec;
-      updateScene(elapsed);
-      updatePlanes(elapsed);
-
-      STATE.frameId = requestAnimationFrame(tick);
-    }
-
-    function updateScene(t) {
-      clock.textContent = formatColdOpenClock(t);
-
-      if (t < 7) {
-        setText(
-          "What happens when this sky has to shut down?",
-          "New York airspace, compressed into a few seconds."
-        );
-        setStats("NYC", "OFF");
-        setDocument(false);
-        setTitle(false);
-        setWarning(false);
-        setTfr(false, false);
-        setIntercept(false);
-        setPlaneMode("normal");
-        flyOnce("scene0", {
-          center: NYC_CENTER,
-          zoom: 7.55,
-          pitch: 42,
-          bearing: -18,
-          speed: 0.22
-        });
-      }
-
-      else if (t < 12) {
-        setText(
-          "During the biggest sporting event on Earth.",
-          "The World Cup Final brought the security operation into the sky."
-        );
-        setStats("NYC", "OFF");
-        setTfr(false, false);
-        setIntercept(false);
-        setPlaneMode("normal");
-        flyOnce("scene1", {
-          center: [-74.08, 40.75],
-          zoom: 8.25,
-          pitch: 48,
-          bearing: -22,
-          speed: 0.24
-        });
-      }
-
-      else if (t < 17) {
-        setText(
-          "Then the no-fly zone appeared.",
-          "MetLife Stadium sat almost on top of Teterboro Airport."
-        );
-        setStats("METLIFE", "ON");
-        setTfr(true, false);
-        setIntercept(false);
-        setPlaneMode("normal");
-        flyOnce("scene2", {
-          center: METLIFE,
-          zoom: 9.25,
-          pitch: 52,
-          bearing: -26,
-          speed: 0.24
-        });
-      }
-
-      else if (t < 23) {
-        setText(
-          "The airport did not close. It became one-way.",
-          "Departures kept leaving. Arrivals almost vanished."
-        );
-        setStats("TEB", "ON");
-        setTfr(true, true);
-        setIntercept(false);
-        setPlaneMode("fade");
-        flyOnce("scene3", {
-          center: [-74.0665, 40.827],
-          zoom: 9.7,
-          pitch: 55,
-          bearing: -32,
-          speed: 0.22
-        });
-      }
-
-      else if (t < 30) {
-        setText(
-          "Aircraft already airborne had to wait, turn, or divert.",
-          "The queue formed far outside the city."
-        );
-        setStats("HOLDS", "ON");
-        setTfr(true, false);
-        setIntercept(false);
-        setPlaneMode("focus");
-        flyOnce("scene4", {
-          center: [-73.95, 41.25],
-          zoom: 7.2,
-          pitch: 48,
-          bearing: -18,
-          speed: 0.22
-        });
-      }
-
-      else if (t < 36) {
-        setText(
-          "Then the FAA started issuing orders.",
-          "Security became air traffic control."
-        );
-        setStats("FAA", "ON");
-        setDocument(true);
-        setWarning(false);
-        setTfr(true, false);
-        setIntercept(false);
-        setPlaneMode("dim");
-        flyOnce("scene5", {
-          center: [-74.2, 40.8],
-          zoom: 7.9,
-          pitch: 35,
-          bearing: -12,
-          speed: 0.20
-        });
-      }
-
-      else if (t < 42) {
-        setText(
-          "And the most dramatic part does not appear in the data.",
-          "Military intercepts happened, but fighter tracks are not visible here."
-        );
-        setStats("TFR", "ON");
-        setDocument(false);
-        setWarning(true);
-        setTfr(true, true);
-        setIntercept(true);
-        setPlaneMode("dim");
-        flyOnce("scene6", {
-          center: METLIFE,
-          zoom: 8.9,
-          pitch: 58,
-          bearing: -34,
-          speed: 0.20
-        });
-      }
-
-      else {
-        setText("", "");
-        setStats("TEB", "ON");
-        setDocument(false);
-        setWarning(false);
-        setTfr(true, true);
-        setIntercept(false);
-        setPlaneMode("hidden");
-        setTitle(true);
-        flyOnce("scene7", {
-          center: TEB,
-          zoom: 10.5,
-          pitch: 60,
-          bearing: -28,
-          speed: 0.20
-        });
-      }
-    }
-
-    function updatePlanes(t) {
-      let visible = 0;
-
-      for (const id of STATE.selectedIds) {
-        const flight = STATE.flights[id];
-        const marker = STATE.markers.get(id);
-        if (!flight || !marker || !Array.isArray(flight.track) || flight.track.length < 2) continue;
-
-        const el = marker.getElement();
-
-        if (el.classList.contains("hidden")) {
-          continue;
-        }
-
-        let effectiveT = t;
-
-        /*
-          Chapter 7 preview:
-          between 23 and 30 seconds, prioritize the focus flights.
-        */
-        if (t >= 23 && t < 30) {
-          if (!FOCUS_FLIGHTS.includes(id)) {
-            el.style.opacity = "0";
-            continue;
-          }
-          effectiveT = 23 + ((t - 23) * 2.2);
-        }
-
-        const p = pointOnTrackCompressed(flight.track, effectiveT / STATE.durationSec);
-        if (!p) continue;
-
-        marker.setLngLat([p.lon, p.lat]);
-
-        const heading = Number.isFinite(p.heading) ? p.heading : 0;
-        el.style.transform = "rotate(" + heading + "deg)";
-
-        if (FOCUS_FLIGHTS.includes(id)) {
-          el.classList.add("highlight");
-        } else {
-          el.classList.remove("highlight");
-        }
-
-        visible++;
-      }
-
-      statVisible.textContent = visible;
-    }
-
-    function pointOnTrackCompressed(track, progress) {
-      if (!track || track.length < 2) return null;
-
-      const safeProgress = Math.max(0, Math.min(0.999, progress));
-      const idxFloat = safeProgress * (track.length - 1);
-      const idx = Math.floor(idxFloat);
-      const frac = idxFloat - idx;
-
-      const a = track[idx];
-      const b = track[Math.min(idx + 1, track.length - 1)];
-
-      const lat = lerp(a[1], b[1], frac);
-      const lon = lerp(a[2], b[2], frac);
-      const heading = Number.isFinite(b[4]) ? b[4] : 0;
-
-      return { lat, lon, heading };
-    }
-
-    function addStaticMapElements() {
-      addPointMarker("METLIFE", METLIFE, "METLIFE STADIUM", "stadium-dot");
-      addPointMarker("KTEB", TEB, "TETERBORO", "airport-dot pulse-dot");
-      addPointMarker("KEWR", EWR, "NEWARK", "airport-dot");
-      addPointMarker("KLGA", LGA, "LAGUARDIA", "airport-dot");
-      addPointMarker("KJFK", JFK, "JFK", "airport-dot");
-      addPointMarker("KMMU", MMU, "MORRISTOWN", "airport-dot");
-      addPointMarker("KHPN", HPN, "WESTCHESTER", "airport-dot");
-      addPointMarker("KSWF", SWF, "STEWART", "airport-dot");
-      addPointMarker("KBOS", BOS, "BOSTON", "airport-dot");
-    }
-
-    function addPointMarker(id, lngLat, label, className) {
-      const el = document.createElement("div");
-      el.className = className;
-
-      const marker = new mapboxgl.Marker({ element: el })
-        .setLngLat(lngLat)
-        .setPopup(new mapboxgl.Popup({
-          closeButton: false,
-          closeOnClick: false,
-          offset: 18
-        }).setText(label))
-        .addTo(map);
-
-      marker.getElement().addEventListener("mouseenter", () => marker.togglePopup());
-      marker.getElement().addEventListener("mouseleave", () => marker.togglePopup());
-    }
-
-    function addTfrLayers() {
-      map.addSource("stadium-tfr-3nm", {
-        type: "geojson",
-        data: circleToGeoJson(METLIFE, 3)
-      });
-
-      map.addLayer({
-        id: "stadium-tfr-fill",
-        type: "fill",
-        source: "stadium-tfr-3nm",
-        paint: {
-          "fill-color": "#ff3b30",
-          "fill-opacity": 0
-        }
-      });
-
-      map.addLayer({
-        id: "stadium-tfr-line",
-        type: "line",
-        source: "stadium-tfr-3nm",
-        paint: {
-          "line-color": "#ff3b30",
-          "line-width": 0,
-          "line-opacity": 0
-        }
-      });
-
-      map.addSource("vip-tfr-10nm", {
-        type: "geojson",
-        data: circleToGeoJson(METLIFE, 10)
-      });
-
-      map.addLayer({
-        id: "vip-tfr-fill",
-        type: "fill",
-        source: "vip-tfr-10nm",
-        paint: {
-          "fill-color": "#ff3b30",
-          "fill-opacity": 0
-        }
-      });
-
-      map.addLayer({
-        id: "vip-tfr-line",
-        type: "line",
-        source: "vip-tfr-10nm",
-        paint: {
-          "line-color": "#ff3b30",
-          "line-width": 0,
-          "line-opacity": 0
-        }
-      });
-    }
-
-    function addInterceptLayer() {
-      const line = {
-        type: "FeatureCollection",
-        features: [{
-          type: "Feature",
-          properties: {},
-          geometry: {
-            type: "LineString",
-            coordinates: [
-              [-74.55, 40.98],
-              [-74.35, 40.92],
-              [-74.17, 40.84]
-            ]
-          }
-        }]
-      };
-
-      map.addSource("synthetic-intercept", {
-        type: "geojson",
-        data: line
-      });
-
-      map.addLayer({
-        id: "synthetic-intercept-line",
-        type: "line",
-        source: "synthetic-intercept",
-        paint: {
-          "line-color": "#ffd43b",
-          "line-width": 0,
-          "line-opacity": 0,
-          "line-dasharray": [2, 2]
-        }
-      });
-    }
-
-    function setIntercept(show) {
-      if (!map.getLayer("synthetic-intercept-line")) return;
-
-      map.setPaintProperty("synthetic-intercept-line", "line-width", show ? 4 : 0);
-      map.setPaintProperty("synthetic-intercept-line", "line-opacity", show ? 0.95 : 0);
-    }
-
-    function setTfr(showSmall, showLarge) {
-      if (!map.getLayer("stadium-tfr-fill")) return;
-
-      map.setPaintProperty("stadium-tfr-fill", "fill-opacity", showSmall ? 0.18 : 0);
-      map.setPaintProperty("stadium-tfr-line", "line-opacity", showSmall ? 0.95 : 0);
-      map.setPaintProperty("stadium-tfr-line", "line-width", showSmall ? 3 : 0);
-
-      map.setPaintProperty("vip-tfr-fill", "fill-opacity", showLarge ? 0.09 : 0);
-      map.setPaintProperty("vip-tfr-line", "line-opacity", showLarge ? 0.75 : 0);
-      map.setPaintProperty("vip-tfr-line", "line-width", showLarge ? 2 : 0);
-    }
-
-    function setPlaneMode(mode) {
-      for (const [id, marker] of STATE.markers.entries()) {
-        const el = marker.getElement();
-
-        el.classList.remove("dim", "hidden");
-        el.style.opacity = "";
-
-        if (mode === "normal") {
-          el.classList.remove("dim", "hidden");
-        }
-
-        if (mode === "fade") {
-          if (!FOCUS_FLIGHTS.includes(id)) {
-            el.classList.add("dim");
-          }
-        }
-
-        if (mode === "focus") {
-          if (!FOCUS_FLIGHTS.includes(id)) {
-            el.style.opacity = "0";
-          } else {
-            el.style.opacity = "1";
-          }
-        }
-
-        if (mode === "dim") {
-          el.classList.add("dim");
-        }
-
-        if (mode === "hidden") {
-          el.classList.add("hidden");
-        }
-      }
-    }
-
-    function setText(main, sub) {
-      caption.textContent = main;
-      subcaption.textContent = sub;
-    }
-
-    function setStats(focus, tfr) {
-      statFocus.textContent = focus;
-      statTfr.textContent = tfr;
-    }
-
-    function setDocument(show) {
-      documentCard.style.display = show ? "block" : "none";
-    }
-
-    function setTitle(show) {
-      titleCard.style.display = show ? "flex" : "none";
-    }
-
-    function setWarning(show) {
-      warning.style.display = show ? "block" : "none";
-    }
-
-    let lastCameraKey = null;
-
-    function flyOnce(key, opts) {
-      if (lastCameraKey === key) return;
-      lastCameraKey = key;
-
-      map.easeTo({
-        center: opts.center,
-        zoom: opts.zoom,
-        pitch: opts.pitch,
-        bearing: opts.bearing,
-        duration: 2200,
-        easing: t => t * (2 - t)
-      });
-    }
-
-    function circleToGeoJson(center, radiusNm, points = 160) {
-      const radiusKm = radiusNm * 1.852;
-      const coords = [];
-      const earthRadiusKm = 6371;
-
-      const lon = degToRad(center[0]);
-      const lat = degToRad(center[1]);
-      const d = radiusKm / earthRadiusKm;
-
-      for (let i = 0; i <= points; i++) {
-        const brng = degToRad((i / points) * 360);
-
-        const lat2 = Math.asin(
-          Math.sin(lat) * Math.cos(d) +
-          Math.cos(lat) * Math.sin(d) * Math.cos(brng)
-        );
-
-        const lon2 = lon + Math.atan2(
-          Math.sin(brng) * Math.sin(d) * Math.cos(lat),
-          Math.cos(d) - Math.sin(lat) * Math.sin(lat2)
-        );
-
-        coords.push([radToDeg(lon2), radToDeg(lat2)]);
-      }
-
-      return {
-        type: "FeatureCollection",
-        features: [{
-          type: "Feature",
-          properties: {},
-          geometry: {
-            type: "Polygon",
-            coordinates: [coords]
-          }
-        }]
-      };
-    }
-
-    function formatColdOpenClock(t) {
-      const total = Math.floor(t);
-      const mm = String(Math.floor(total / 60)).padStart(2, "0");
-      const ss = String(total % 60).padStart(2, "0");
-      return mm + ":" + ss;
-    }
-
-    function lerp(a, b, t) {
-      return a + (b - a) * t;
-    }
-
-    function degToRad(d) {
-      return d * Math.PI / 180;
-    }
-
-    function radToDeg(r) {
-      return r * 180 / Math.PI;
-    }
-
-    function showNoDataWarning() {
-      console.warn("No real flight data loaded. Using fallback preview paths.");
-      warning.textContent = "No flight data files loaded. Fallback preview paths are being used.";
-      warning.style.display = "block";
-    }
-
-    function buildFallbackPreviewFlights() {
-      /*
-        Fallback only prevents the page from being blank.
-        Replace by placing real data files beside chapter0.html.
-      */
-      const now = 0;
-
-      function makeFlight(id, coords, heading) {
-        return {
-          callsign: id,
-          track: coords.map((c, i) => [now + i * 60, c[1], c[0], 0, heading])
-        };
-      }
-
-      return {
-        PREVIEW01: makeFlight("PREVIEW01", [[-75.2,40.6],[-74.7,40.75],[-74.1,40.84],[-73.6,40.9]], 80),
-        PREVIEW02: makeFlight("PREVIEW02", [[-73.4,41.2],[-73.8,41.0],[-74.1,40.86],[-74.5,40.7]], 230),
-        PREVIEW03: makeFlight("PREVIEW03", [[-74.9,41.3],[-74.5,41.0],[-74.2,40.75],[-73.9,40.6]], 135),
-        PREVIEW04: makeFlight("PREVIEW04", [[-72.8,40.7],[-73.4,40.76],[-74.0,40.8],[-74.3,40.9]], 270),
-        UAL963: makeFlight("UAL963", [[-74.3,41.6],[-73.9,41.35],[-73.6,41.3],[-71.0,42.36]], 70),
-        AUA3VG: makeFlight("AUA3VG", [[-74.4,40.5],[-74.0,40.8],[-74.1,41.5],[-74.10,41.50]], 15),
-        RPA3435: makeFlight("RPA3435", [[-75.0,41.0],[-74.6,41.2],[-73.9,41.8],[-72.7,41.94]], 75),
-        AXY252W: makeFlight("AXY252W", [[-73.7,41.0],[-73.4,41.3],[-74.4,40.8],[-74.4,40.8]], 180),
-        EJA165: makeFlight("EJA165", [[-74.1,40.3],[-73.9,40.8],[-73.7,41.07],[-73.7,41.07]], 350)
-      };
-    }
-  </script>
+  }
+})();
+</script>
 </body>
 </html>
