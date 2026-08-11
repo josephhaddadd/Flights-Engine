@@ -161,22 +161,23 @@ window.Holiscope=function(CFG){
     setRate(1);
     map.on('load',function(){
       // zones
+      // Backward compatible:
+      //   {center:[lon,lat], radius_nm:3, color:'#f00', label:'...'}
+      // Dual-ring VIP TFR:
+      //   {center:[lon,lat], inner_nm:10, outer_nm:30,
+      //    innerColor:'#FF3B30', outerColor:'#FF9500',
+      //    label:'VIP TFR', effect:'static'|'appear'|'appear-glow'}
       if(S.zones){
         C.zones.forEach(function(z,i){
-          var ring=[],R=z.radius_nm/60.0,k=Math.cos(z.center[1]*Math.PI/180);
-          for(var a=0;a<=72;a++){var th=a/72*2*Math.PI;
-            ring.push([z.center[0]+(R/k)*Math.cos(th),z.center[1]+R*Math.sin(th)]);}
-          var col=z.color||"#FF3B30";
-          map.addSource('z'+i,{type:'geojson',data:{type:'Feature',geometry:{type:'Polygon',coordinates:[ring]}}});
-          map.addLayer({id:'zf'+i,type:'fill',source:'z'+i,paint:{'fill-color':col,'fill-opacity':0.12}});
-          map.addLayer({id:'zo'+i,type:'line',source:'z'+i,
-            paint:{'line-color':col,'line-width':2,'line-opacity':0.85,'line-dasharray':[3,2]}});
-          if(z.label){
-            map.addSource('zl'+i,{type:'geojson',data:{type:'Feature',properties:{t:z.label},
-              geometry:{type:'Point',coordinates:[z.center[0],z.center[1]+R*1.05]}}});
-            map.addLayer({id:'zt'+i,type:'symbol',source:'zl'+i,
-              layout:{'text-field':['get','t'],'text-size':10,'text-letter-spacing':0.12,'text-allow-overlap':true},
-              paint:{'text-color':col,'text-halo-color':'rgba(0,0,0,.85)','text-halo-width':1.2}});
+          if(z.inner_nm!=null || z.outer_nm!=null){
+            if(z.outer_nm!=null)addZoneRing(z,i,'outer',z.outer_nm,z.outerColor||'#FF9500',0.035,2.2);
+            if(z.inner_nm!=null)addZoneRing(z,i,'inner',z.inner_nm,z.innerColor||'#FF3B30',0.10,2.8);
+            addZoneLabel(z,i,z.outer_nm||z.inner_nm,z.outerColor||z.innerColor||'#FF9500');
+            animateZone(z,i,z.outer_nm!=null,z.inner_nm!=null);
+          }else if(z.radius_nm!=null){
+            addZoneRing(z,i,'single',z.radius_nm,z.color||'#FF3B30',0.12,2);
+            addZoneLabel(z,i,z.radius_nm,z.color||'#FF3B30');
+            animateZone(z,i,false,false,true);
           }
         });
       }
@@ -214,6 +215,60 @@ window.Holiscope=function(CFG){
         paint:{'text-color':['get','c'],'text-halo-color':'rgba(0,0,0,.85)','text-halo-width':1.0}});
       ready=true;render(0);wire();
     });
+  }
+  function zonePolygon(center,radiusNm){
+    var ring=[],R=radiusNm/60.0,k=Math.cos(center[1]*Math.PI/180);
+    for(var a=0;a<=144;a++){var th=a/144*2*Math.PI;
+      ring.push([center[0]+(R/k)*Math.cos(th),center[1]+R*Math.sin(th)]);}
+    return {type:'Feature',geometry:{type:'Polygon',coordinates:[ring]}};
+  }
+  function addZoneRing(z,i,part,radiusNm,col,fillOpacity,lineWidth){
+    var sid='z_'+i+'_'+part, fid='zf_'+i+'_'+part, oid='zo_'+i+'_'+part;
+    map.addSource(sid,{type:'geojson',data:zonePolygon(z.center,radiusNm)});
+    map.addLayer({id:fid,type:'fill',source:sid,paint:{
+      'fill-color':col,'fill-opacity':fillOpacity}});
+    map.addLayer({id:oid,type:'line',source:sid,paint:{
+      'line-color':col,'line-width':lineWidth,'line-opacity':0.88,'line-dasharray':[3,2]}});
+  }
+  function addZoneLabel(z,i,radiusNm,col){
+    if(!z.label||radiusNm==null)return;
+    var R=radiusNm/60.0;
+    map.addSource('zl'+i,{type:'geojson',data:{type:'Feature',properties:{t:z.label},
+      geometry:{type:'Point',coordinates:[z.center[0],z.center[1]+R*1.05]}}});
+    map.addLayer({id:'zt'+i,type:'symbol',source:'zl'+i,
+      layout:{'text-field':['get','t'],'text-size':10,'text-letter-spacing':0.12,
+              'text-allow-overlap':true,'text-ignore-placement':true},
+      paint:{'text-color':col,'text-opacity':1,
+             'text-halo-color':'rgba(0,0,0,.85)','text-halo-width':1.2}});
+  }
+  function animateZone(z,i,hasOuter,hasInner,isSingle){
+    var effect=z.effect||'static';
+    if(effect==='static')return;
+    var delay=(z.delay==null?1.8:+z.delay)*1000;
+    var duration=(z.duration==null?1.25:+z.duration)*1000;
+    var start=performance.now()+delay;
+    var fills=[],lines=[];
+    if(isSingle){fills.push(['zf_'+i+'_single',0.12]);lines.push(['zo_'+i+'_single',0.88]);}
+    if(hasOuter){fills.push(['zf_'+i+'_outer',0.035]);lines.push(['zo_'+i+'_outer',0.88]);}
+    if(hasInner){fills.push(['zf_'+i+'_inner',0.10]);lines.push(['zo_'+i+'_inner',0.92]);}
+    fills.forEach(function(x){map.setPaintProperty(x[0],'fill-opacity',0);});
+    lines.forEach(function(x){map.setPaintProperty(x[0],'line-opacity',0);});
+    if(z.label&&map.getLayer('zt'+i))map.setPaintProperty('zt'+i,'text-opacity',0);
+    function frame(now){
+      var p=Math.max(0,Math.min(1,(now-start)/duration));
+      var eased=1-Math.pow(1-p,3);
+      fills.forEach(function(x){map.setPaintProperty(x[0],'fill-opacity',x[1]*eased);});
+      lines.forEach(function(x){
+        var pulse=1;
+        if(effect==='appear-glow'&&p>=1)pulse=0.78+0.22*Math.sin(now/260);
+        map.setPaintProperty(x[0],'line-opacity',x[1]*eased*pulse);
+        if(effect==='appear-glow')map.setPaintProperty(x[0],'line-width',
+          (x[0].indexOf('_inner')>=0?2.8:2.2)+(p>=1?1.1*(0.5+0.5*Math.sin(now/260)):0));
+      });
+      if(z.label&&map.getLayer('zt'+i))map.setPaintProperty('zt'+i,'text-opacity',eased);
+      if(p<1||effect==='appear-glow')requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
   }
   function addPlaces(style,rad,dot,txt){
     var ps=C.places.filter(function(p){return (p.style||'airport')===style;});
