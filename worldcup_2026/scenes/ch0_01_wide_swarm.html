@@ -2,108 +2,96 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>CH0 01 Wide Swarm</title>
+  <title>CH0 01 Wide Swarm Before</title>
 </head>
 
 <body>
 <script>
 /*
-  CHAPTER 0 - WIDE SWARM SHOT
-  Synthetic cold-open visual only.
-  Not factual flight evidence.
+  CHAPTER 0 - WIDE SWARM BEFORE SHOT
+
+  Purpose:
+  Show busy New York airspace BEFORE the no-fly zone appears.
+
+  Important:
+  This is synthetic cold-open traffic.
+  It is visual atmosphere, not evidence data.
+  The factual evidence comes later in the real flight-data chapters.
 */
 
 var B = 1784476800;
+var FLIGHTS = {};
 
-var FLIGHTS = {
-  SWARM001: {
-    callsign: "SWARM001",
-    kind: "ARR",
+function addFlight(id, kind, startLon, startLat, endLon, endLat, alt1, alt2, heading, offset) {
+  FLIGHTS[id] = {
+    callsign: id,
+    kind: kind,
     track: [
-      [B+0,   40.55, -74.85, 1800, 75],
-      [B+300, 40.68, -74.45, 1400, 75],
-      [B+600, 40.78, -74.12, 900,  75],
-      [B+900, 40.88, -73.80, 500,  75]
+      [B + offset,       startLat, startLon, alt1, heading],
+      [B + offset + 300, (startLat * 0.66 + endLat * 0.34), (startLon * 0.66 + endLon * 0.34), Math.round((alt1 * 0.66 + alt2 * 0.34)), heading],
+      [B + offset + 600, (startLat * 0.34 + endLat * 0.66), (startLon * 0.34 + endLon * 0.66), Math.round((alt1 * 0.34 + alt2 * 0.66)), heading],
+      [B + offset + 900, endLat, endLon, alt2, heading]
     ]
-  },
+  };
+}
 
-  SWARM002: {
-    callsign: "SWARM002",
-    kind: "ARR",
-    track: [
-      [B+0,   41.05, -73.30, 1900, 245],
-      [B+260, 40.95, -73.65, 1500, 245],
-      [B+560, 40.83, -74.00, 900,  245],
-      [B+860, 40.70, -74.35, 500,  245]
-    ]
-  },
+/*
+  Synthetic swarm around New York.
+  Mix of arrivals and departures from multiple directions.
+*/
 
-  SWARM003: {
-    callsign: "SWARM003",
-    kind: "DEP",
-    track: [
-      [B+60,  40.85, -74.06, 400,  120],
-      [B+330, 40.74, -73.78, 1000, 120],
-      [B+680, 40.60, -73.42, 1700, 120],
-      [B+960, 40.48, -73.05, 2400, 120]
-    ]
-  },
+var routes = [
+  [-[
+75.10,40.50,-73.70,40.90,75],
+[-75.00,41.10,-73.80,40.75,105],
+  [-74.80,39.95,-73.95,40.85,35],
+  [-72.75,40.70,-74.20,40.82,280],
+  [-73.20,41.35,-74.15,40.70,220],
+  [-74.95,41.45,-73.85,40.70,140],
+  [-72.65,41.00,-74.05,40.80,255],
+  [-75.35,40.90,-74.00,40.84,90],
+  [-74.55,39.90,-74.02,40.84,20],
+  [-73.15,40.25,-74.18,40.82,300],
 
-  SWARM004: {
-    callsign: "SWARM004",
-    kind: "DEP",
-    track: [
-      [B+20,  40.69, -74.17, 400,  35],
-      [B+300, 40.88, -74.05, 1000, 35],
-      [B+620, 41.10, -73.88, 1800, 35],
-      [B+920, 41.32, -73.70, 2400, 35]
-    ]
-  },
+  [-74.06,40.85,-73.00,40.45,115],
+  [-74.17,40.69,-73.40,41.30,35],
+  [-73.87,40.77,-74.70,41.35,315],
+  [-73.78,40.64,-72.55,40.90,70],
+  [-74.06,40.85,-75.30,40.75,260],
+  [-73.87,40.77,-73.45,39.70,160],
+  [-74.17,40.69,-75.15,41.10,295],
+  [-73.78,40.64,-74.78,40.18,235],
+  [-74.06,40.85,-73.78,41.75,10],
+  [-74.17,40.69,-72.82,40.80,85]
+];
 
-  SWARM005: {
-    callsign: "SWARM005",
-    kind: "ARR",
-    track: [
-      [B+30,  41.10, -75.05, 2200, 105],
-      [B+320, 40.98, -74.65, 1700, 105],
-      [B+630, 40.86, -74.25, 1100, 105],
-      [B+950, 40.76, -73.88, 600,  105]
-    ]
-  },
+for (var i = 0; i < 60; i++) {
+  var r = routes[i % routes.length];
 
-  SWARM006: {
-    callsign: "SWARM006",
-    kind: "ARR",
-    track: [
-      [B+0,   40.70, -72.90, 2200, 280],
-      [B+250, 40.75, -73.35, 1700, 280],
-      [B+560, 40.78, -73.82, 1100, 280],
-      [B+880, 40.82, -74.20, 600,  280]
-    ]
-  },
+  var jitterLon1 = (Math.random() - 0.5) * 0.18;
+  var jitterLat1 = (Math.random() - 0.5) * 0.14;
+  var jitterLon2 = (Math.random() - 0.5) * 0.18;
+  var jitterLat2 = (Math.random() - 0.5) * 0.14;
 
-  SWARM007: {
-    callsign: "SWARM007",
-    kind: "DEP",
-    track: [
-      [B+80,  40.77, -73.87, 400,  315],
-      [B+360, 40.95, -74.10, 950,  315],
-      [B+660, 41.15, -74.38, 1600, 315],
-      [B+980, 41.35, -74.70, 2300, 315]
-    ]
-  },
+  var kind = i % 3 === 0 ? "DEP" : "ARR";
+  var id = "SWARM" + String(i + 1).padStart(3, "0");
 
-  SWARM008: {
-    callsign: "SWARM008",
-    kind: "ARR",
-    track: [
-      [B+40,  40.25, -74.95, 2100, 50],
-      [B+340, 40.45, -74.62, 1600, 50],
-      [B+650, 40.66, -74.28, 1000, 50],
-      [B+920, 40.86, -73.96, 600,  50]
-    ]
-  }
-};
+  var startAlt = kind === "ARR" ? 2200 + (i % 6) * 120 : 400 + (i % 5) * 80;
+  var endAlt   = kind === "ARR" ? 500 + (i % 5) * 60 : 2400 + (i % 6) * 120;
+
+  addFlight(
+    id,
+    kind,
+    r[0] + jitterLon1,
+    r[1] + jitterLat1,
+    r[2] + jitterLon2,
+    r[3] + jitterLat2,
+    startAlt,
+    endAlt,
+    r[4],
+    (i % 12) * 28
+  );
+}
 </script>
 
 <script>
@@ -123,42 +111,41 @@ var FLIGHTS = {
       dateLabel : "Sunday 19 July 2026",
       utcOffset : -4,
 
+      /*
+        Your requested camera.
+      */
       camera : [-73.9519, 40.7480, 9.82],
 
       colour : "by_direction",
       labels : "none",
-      trails : "all",
+
+      /*
+        BEFORE shot: no trails.
+      */
+      trails : "none",
+
+      /*
+        Keep planes visible during the shot.
+      */
       vanish : false,
 
       places : [
-        { name:"MetLife Stadium", at:[-74.0745,40.8135], style:"venue" },
         { name:"Teterboro", at:[-74.0608,40.8501], style:"airport" },
         { name:"Newark", at:[-74.1687,40.6895], style:"airport" },
         { name:"LaGuardia", at:[-73.8740,40.7769], style:"airport" },
         { name:"JFK", at:[-73.7781,40.6413], style:"airport" },
-        { name:"Westchester", at:[-73.7076,41.0670], style:"airport" },
-        { name:"Morristown", at:[-74.4149,40.7994], style:"airport" }
+        { name:"MetLife Stadium", at:[-74.0745,40.8135], style:"venue" }
       ],
 
-      zones : [
-        {
-          center: [-74.0745,40.8135],
-          radius_nm: 3,
-          color: "#FF3B30",
-          label: "STADIUM TFR"
-        },
-        {
-          center: [-74.0745,40.8135],
-          radius_nm: 10,
-          color: "#FF3B30",
-          label: "RESTRICTED AIRSPACE"
-        }
-      ],
+      /*
+        BEFORE shot: no zones.
+      */
+      zones : [],
 
       show : {
         clock: true,
         counters: false,
-        zones: true,
+        zones: false,
         placeLabels: true,
         legend: false
       }
@@ -166,7 +153,8 @@ var FLIGHTS = {
   };
 
   e.onerror = function(){
-    document.body.innerHTML = '<p style="color:#fff;background:#000;padding:20px;font-family:Arial">engine.js failed to load.</p>';
+    document.body.innerHTML =
+      '<p style="color:#fff;background:#000;padding:20px;font-family:Arial">engine.js failed to load.</p>';
   };
 
   document.body.appendChild(e);
