@@ -2,52 +2,286 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>CH0 01 Wide Zone Swarm</title>
+  <title>CH0 01 Wide Swarm</title>
 </head>
+
 <body>
+
+<script>
+/*
+  CHAPTER 0 - WIDE SWARM SHOT
+
+  This is a synthetic cold-open shot.
+  It is not evidence data.
+  It is only meant to visually show busy New York airspace
+  before the real story begins.
+*/
+
+var B = 1784476800; 
+// 12:00 EDT on Sunday 19 July 2026, matching the engine time window.
+
+var FLIGHTS = {
+  SWARM001:{
+    callsign:"SWARM001",
+    kind:"ARR",
+    track:[
+      [B+0,40.55,-74.85,1800,75],
+      [B+300,40.68,-74.45,1400,75],
+      [B+600,40.78,-74.12,900,75],
+      [B+900,40.88,-73.80,500,75]
+    ]
+  },
+
+  SWARM002:{
+    callsign:"SWARM002",
+    kind:"ARR",
+    track:[
+      [B+0,41.05,-73.30,1900,245],
+      [B+260,40.95,-73.65,1500,245],
+      [B+560,40.83,-74.00,900,245],
+      [B+860,40.70,-74.35,500,245]
+    ]
+  },
+
+  SWARM003:{
+    callsign:"SWARM003",
+    kind:"DEP",
+    track:[
+      [B+60,40.85,-74.06,400,120],
+      [B+330,40.74,-73.78,1000,120],
+      [B+680,40.60,-73.42,1700,120],
+      [B+960,40.48,-73.05,2400,120]
+    ]
+  },
+
+  SWARM004:{
+    callsign:"SWARM004",
+    kind:"DEP",
+    track:[
+      [B+20,40.69,-74.17,400,35],
+      [B+300,40.88,-74.05,1000,35],
+      [B+620,41.10,-73.88,1800,35],
+      [B+920,41.32,-73.70,2400,35]
+    ]
+  },
+
+  SWARM005:{
+    callsign:"SWARM005",
+    kind:"ARR",
+    track:[
+      [B+30,41.10,-75.05,2200,105],
+      [B+320,40.98,-74.65,1700,105],
+      [B+630,40.86,-74.25,1100,105],
+      [B+950,40.76,-73.88,600,105]
+    ]
+  },
+
+  SWARM006:{
+    callsign:"SWARM006",
+    kind:"ARR",
+    track:[
+      [B+0,40.70,-72.90,2200,280],
+      [B+250,40.75,-73.35,1700,280],
+      [B+560,40.78,-73.82,1100,280],
+      [B+880,40.82,-74.20,600,280]
+    ]
+  },
+
+  SWARM007:{
+    callsign:"SWARM007",
+    kind:"DEP",
+    track:[
+      [B+80,40.77,-73.87,400,315],
+      [B+360,40.95,-74.10,950,315],
+      [B+660,41.15,-74.38,1600,315],
+      [B+980,41.35,-74.70,2300,315]
+    ]
+  },
+
+  SWARM008:{
+    callsign:"SWARM008",
+    kind:"ARR",
+    track:[
+      [B+40,40.25,-74.95,2100,50],
+      [B+340,40.45,-74.62,1600,50],
+      [B+650,40.66,-74.28,1000,50],
+      [B+920,40.86,-73.96,600,50]
+    ]
+  },
+
+  SWARM009:{
+    callsign:"SWARM009",
+    kind:"DEP",
+    track:[
+      [B+90,40.64,-73.78,500,70],
+      [B+360,40.73,-73.38,1100,70],
+      [B+700,40.82,-72.95,1800,70],
+      [B+1000,40.90,-72.55,2500,70]
+    ]
+  },
+
+  SWARM010:{
+    callsign:"SWARM010",
+    kind:"ARR",
+    track:[
+      [B+20,41.35,-73.15,2400,220],
+      [B+320,41.12,-73.45,1800,220],
+      [B+620,40.90,-73.75,1200,220],
+      [B+940,40.70,-74.05,600,220]
+    ]
+  },
+
+  SWARM011:{
+    callsign:"SWARM011",
+    kind:"DEP",
+    track:[
+      [B+100,40.85,-74.06,500,260],
+      [B+390,40.82,-74.45,1100,260],
+      [B+690,40.78,-74.90,1800,260],
+      [B+990,40.75,-75.30,2500,260]
+    ]
+  },
+
+  SWARM012:{
+    callsign:"SWARM012",
+    kind:"ARR",
+    track:[
+      [B+30,41.45,-74.80,2400,140],
+      [B+310,41.15,-74.50,1800,140],
+      [B+620,40.90,-74.23,1100,140],
+      [B+940,40.66,-73.96,600,140]
+    ]
+  },
+
+  SWARM013:{
+    callsign:"SWARM013",
+    kind:"DEP",
+    track:[
+      [B+70,40.69,-74.17,500,295],
+      [B+360,40.82,-74.45,1200,295],
+      [B+650,40.96,-74.80,1800,295],
+      [B+960,41.10,-75.15,2500,295]
+    ]
+  },
+
+  SWARM014:{
+    callsign:"SWARM014",
+    kind:"ARR",
+    track:[
+      [[
+B+10,41.00,-72.65,2400,255],
+    [B+310,40.93,-73.10,1800,255],
+      [B+620,40.86,-73.58,1000,255],
+      [B+900,40.80,-74.03,500,255]
+    ]
+  },
+
+  SWARM015:{
+    callsign:"SWARM015",
+    kind:"ARR",
+    track:[
+      [B+90,40.90,-75.35,2300,90],
+      [B+360,40.88,-74.90,1700,90],
+      [B+660,40.86,-74.45,1000,90],
+      [B+960,40.84,-74.00,500,90]
+    ]
+  },
+
+  SWARM016:{
+    callsign:"SWARM016",
+    kind:"DEP",
+    track:[
+      [B+110,40.77,-73.87,500,160],
+      [B+390,40.45,-73.75,1200,160],
+      [B+690,40.05,-73.60,1900,160],
+      [B+990,39.70,-73.45,2600,160]
+    ]
+  },
+
+  SWARM017:{
+    callsign:"SWARM017",
+    kind:"ARR",
+    track:[
+      [B+40,39.90,-74.55,2400,20],
+      [B+340,40.25,-74.38,1800,20],
+      [B+650,40.55,-74.20,1100,20],
+      [B+920,40.84,-74.02,600,20]
+    ]
+  },
+
+  SWARM018:{
+    callsign:"SWARM018",
+    kind:"DEP",
+    track:[
+      [B+60,40.85,-74.06,500,10],
+      [B+320,41.12,-73.96,1100,10],
+      [B+630,41.45,-73.86,1800,10],
+      [B+930,41.75,-73.78,2500,10]
+    ]
+  },
+
+  SWARM019:{
+    callsign:"SWARM019",
+    kind:"ARR",
+    track:[
+      [B+50,40.20,-73.20,2100,300],
+      [B+320,40.42,-73.55,1600,300],
+      [B+650,40.63,-73.90,1000,300],
+      [B+930,40.82,-74.18,600,300]
+    ]
+  },
+
+  SWARM020:{
+    callsign:"SWARM020",
+    kind:"DEP",
+    track:[
+      [B+75,40.64,-73.78,500,235],
+      [B+350,40.52,-74.05,1100,235],
+      [B+675,40.35,-74.42,1800,235],
+      [B+955,40.18,-74.78,2500,235]
+    ]
+  },
+
+  SWARM021:{
+    callsign:"SWARM021",
+    kind:"ARR",
+    track:[
+      [[
+B+25,41.60,-74.35,2300,155],
+    [B+320,41.25,-74.22,1700,155],
+      [B+640,40.98,-74.10,1100,155],
+      [B+920,40.76,-74.00,600,155]
+    ]
+  },
+
+  SWARM022:{
+    callsign:"SWARM022",
+    kind:"DEP",
+    track:[
+      [[
+B+95,40.69,-74.17,500,85],
+    [B+350,40.72,-73.72,1100,85],
+      [B+680,40.76,-73.25,1800,85],
+      [B+960,40.80,-72.82,2500,85]
+    ]
+  }
+};
+</script>
+
 <script>
 (function(){
-  var d=document.createElement('script');
 
-  /*
-    Synthetic cold-open swarm.
-    This is not evidence data.
-    It is a visual establishing shot.
-  */
-  d.src='../scenes_data/ch0_swarm_data.js';
+  var e = document.createElement('script');
+  e.src = '../../engine.js';
 
-  d.onload=function(){
-    var e=document.createElement('script');
-    e.src='../../engine.js';
-    e.onload=go;
-    e.onerror=function(){
-      document.body.innerHTML='<p style="color:#fff;padding:20px">engine.js failed to load.</p>';
-    };
-    document.body.appendChild(e);
-  };
-
-  d.onerror=function(){
-    document.body.innerHTML='<p style="color:#fff;padding:20px">ch0_swarm_data.js failed to load. Check the file name and folder.</p>';
-  };
-
-  document.body.appendChild(d);
-
-  function go(){
+  e.onload = function(){
     Holiscope({
       style : "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
+
       token : "pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
 
-      /*
-        Short cold-open shot.
-        Record this and cut it into CapCut.
-      */
       length : "0:14",
 
-      /*
-        Synthetic time window.
-        The clock is optional here.
-        You can hide it with T while recording.
-      */
       window : ["12:00","12:20"],
       dateEpoch : 1784419200,
       dateLabel : "Sunday 19 July 2026",
@@ -58,28 +292,30 @@
       */
       camera : [-73.9519, 40.7480, 9.82],
 
-      /*
-        Lots of visual motion.
-      */
       colour : "by_direction",
+
       labels : "none",
+
+      /*
+        Trails on gives the swarm energy.
+        If it gets too messy, change this to "none".
+      */
       trails : "all",
+
       vanish : false,
 
       places : [
         { name:"MetLife Stadium", at:[-74.0745,40.8135], style:"venue" },
+
         { name:"Teterboro", at:[-74.0608,40.8501], style:"airport" },
         { name:"Newark", at:[-74.1687,40.6895], style:"airport" },
         { name:"LaGuardia", at:[-73.8740,40.7769], style:"airport" },
         { name:"JFK", at:[-73.7781,40.6413], style:"airport" },
+
         { name:"Westchester", at:[-73.7076,41.0670], style:"airport" },
         { name:"Morristown", at:[-74.4149,40.7994], style:"airport" }
       ],
 
-      /*
-        First wide zone shot.
-        Shows the restriction context immediately.
-      */
       zones : [
         {
           center:[-74.0745,40.8135],
@@ -103,8 +339,17 @@
         legend:false
       }
     });
-  }
+  };
+
+  e.onerror = function(){
+    document.body.innerHTML =
+      '<p style="color:#fff;background:#000;padding:20px;font-family:Arial">engine.js failed to load. Check that this file is in the same folder as your other chapter HTML files.</p>';
+  };
+
+  document.body.appendChild(e);
+
 })();
 </script>
+
 </body>
 </html>
