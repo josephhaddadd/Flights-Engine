@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CH0 03 Consequence Tease</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      overflow: hidden;
+    }
+
+    #darken {
+      position: absolute;
+      inset: 0;
+      z-index: 12;
+      pointer-events: none;
+      background: radial-gradient(circle at 48% 42%, rgba(0,0,0,0.05), rgba(0,0,0,0.42));
+    }
+
+    #storyCards {
+      position: absolute;
+      left: 32px;
+      top: 32px;
+      z-index: 30;
+      pointer-events: none;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #fff;
+    }
+
+    .card {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 330px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(4, 8, 16, 0.68);
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    .card .kicker {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.56);
+      margin-bottom: 8px;
+    }
+
+    .card .title {
+      font-size: 25px;
+      font-weight: 900;
+      line-height: 1.02;
+      color: #fff;
+    }
+
+    .card .sub {
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.32;
+      color: rgba(255,255,255,0.70);
+    }
+
+    #card1 { animation: cardOn 0.5s ease 0.8s forwards, cardOff 0.5s ease 4.0s forwards; }
+    #card2 { animation: cardOn 0.5s ease 4.3s forwards, cardOff 0.5s ease 7.4s forwards; }
+    #card3 { animation: cardOn 0.5s ease 7.8s forwards; }
+
+    @keyframes cardOn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes cardOff {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-8px); }
+    }
+
+    #interceptLayer {
+      position: absolute;
+      inset: 0;
+      z-index: 28;
+      pointer-events: none;
+      opacity: 0;
+      animation: interceptIn 0.7s ease 7.2s forwards;
+    }
+
+    #interceptPath {
+      position: absolute;
+      left: 36%;
+      top: 58%;
+      width: 440px;
+      height: 0;
+      border-top: 3px dashed rgba(255, 212, 59, 0.95);
+      transform: rotate(-18deg);
+      filter: drop-shadow(0 0 10px rgba(255, 212, 59, 0.75));
+    }
+
+    #escortPath {
+      position: absolute;
+      left: 42%;
+      top: 51%;
+      width: 360px;
+      height: 0;
+      border-top: 3px dashed rgba(255, 212, 59, 0.65);
+      transform: rotate(8deg);
+      filter: drop-shadow(0 0 10px rgba(255, 212, 59, 0.55));
+    }
+
+    .jet {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-bottom: 34px solid #ffd43b;
+      filter: drop-shadow(0 0 14px rgba(255, 212, 59, 1));
+      transform-origin: 50% 50%;
+    }
+
+    #milJet1 {
+      left: 35%;
+      top: 56%;
+      transform: rotate(72deg);
+      animation: jetMove1 4.8s linear 7.3s forwards;
+    }
+
+    #milJet2 {
+      left: 41%;
+      top: 49%;
+      transform: rotate(98deg);
+      opacity: 0.82;
+      animation: jetMove2 4.8s linear 7.5s forwards;
+    }
+
+    #interceptNote {
+      position: absolute;
+      right: 34px;
+      bottom: 86px;
+      z-index: 31;
+      max-width: 390px;
+      padding: 11px 13px;
+      border-radius: 12px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      line-height: 1.35;
+      color: rgba(255,255,255,0.78);
+      background: rgba(0,0,0,0.62);
+      border: 1px solid rgba(255,212,59,0.25);
+      opacity: 0;
+      animation: noteIn 0.6s ease 8.0s forwards;
+    }
+
+    @keyframes interceptIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes noteIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes jetMove1 {
+      from { left: 35%; top: 56%; }
+      to { left: 60%; top: 43%; }
+    }
+
+    @keyframes jetMove2 {
+      from { left: 41%; top: 49%; }
+      to { left: 65%; top: 52%; }
+    }
+  </style>
+</head>
+<body>
+<div id="darken"></div>
+
+<div id="storyCards">
+  <div class="card" id="card1">
+    <div class="kicker">COMING UP</div>
+    <div class="title">Holding patterns</div>
+    <div class="sub">Aircraft circling while the system runs out of room.</div>
+  </div>
+  <div class="card" id="card2">
+    <div class="kicker">COMING UP</div>
+    <div class="title">Diversions</div>
+    <div class="sub">Flights abandoning their original destinations.</div>
+  </div>
+  <div class="card" id="card3">
+    <div class="kicker">COMING UP</div>
+    <div class="title">Military intercepts</div>
+    <div class="sub">A disclosed synthetic recreation for the cold open.</div>
+  </div>
+</div>
+
+<div id="interceptLayer">
+  <div id="interceptPath"></div>
+  <div id="escortPath"></div>
+  <div class="jet" id="milJet1"></div>
+  <div class="jet" id="milJet2"></div>
+</div>
+
+<div id="interceptNote">Synthetic recreation. Military intercept aircraft are not visible in civilian flight-tracking data.</div>
+
+<script>
+/* CHAPTER 0 - SHOT 3. Synthetic teaser only, not factual flight evidence. */
+var B = 1784476800;
+var FLIGHTS = {
+  HOLD001: {
+    callsign: "HOLD001",
+    kind: "ARR",
+    track: [
+      [[
+B+0, 41.20, -74.55, 1800, 70],
+    [B+90, 41.33, -74.25, 1800, 35],
+      [B+180, 41.25, -73.95, 1800, 110],
+      [B+270, 41.08, -74.05, 1800, 205],
+      [B+360, 41.05, -74.35, 1800, 285],
+      [B+450, 41.20, -74.55, 1800, 70],
+      [B+750, 41.33, -74.25, 1800, 35]
+    ]
+  },
+  HOLD002: {
+    callsign: "HOLD002",
+    kind: "ARR",
+    track: [
+      [B+40, 40.92, -73.55, 2200, 80],
+      [B+130, 41.04, -73.25, 2200, 30],
+      [B+220, 40.94, -72.95, 2200, 120],
+      [B+310, 40.76, -73.10, 2200, 210],
+      [B+400, 40.78, -73.42, 2200, 300],
+      [B+490, 40.92, -73.55, 2200, 80],
+      [B+790, 41.04, -73.25, 2200, 30]
+    ]
+  },
+  DIVERT001: {
+    callsign: "DIVERT001",
+    kind: "ARR",
+    track: [
+      [B+80, 40.85, -74.30, 1600, 70],
+      [B+220, 41.05, -73.80, 1700, 55],
+      [B+380, 41.35, -73.10, 1900, 70],
+      [B+560, 41.78, -72.45, 1400, 80]
+    ]
+  },
+  DIVERT002: {
+    callsign: "DIVERT002",
+    kind: "ARR",
+    track: [
+      [[
+B+110, 40.70, -74.15, 1400, 300
+      [B+230, 40.92, -74.45, 1700, 315],
+      [B+390, 41.26, -74.75, 2100, 330],
+      [B+560, 41.52, -74.10, 1200, 75]
+    ]
+  },
+  DIVERT003: {
+    callsign: "DIVERT003",
+    kind: "ARR",
+    track: [
+      [B+120, 40.55, -73.75, 1500, 250],
+      [B+260, 40.42, -74.10, 1600, 245],
+      [B+420, 40.25, -74.55, 1800, 245],
+      [B+590, 39.88, -75.24, 1100, 235]
+    ]
+  },
+  CIVILIAN001: {
+    callsign: "CIVILIAN001",
+    kind: "ARR",
+    track: [
+      [B+250, 41.15, -74.70, 1500, 110],
+      [B+380, 41.02, -74.30, 1500, 110],
+      [B+520, 40.92, -73.85, 1500, 112],
+      [B+700, 40.88, -73.45, 1500, 115]
+    ]
+  }
+};
+</script>
+
+<script>
+(function(){
+  var e = document.createElement('script');
+  e.src = '../../engine.js';
+
+  e.onload = function(){
+    Holiscope({
+      style : "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
+      token : "pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
+
+      length : "0:13",
+
+      mode : "drawin",
+      stagger : 0.9,
+      draw : 7.5,
+
+      camera : [-73.95, 41.05, 7.15],
+
+      colour : "per_flight",
+      highlight : ["HOLD001", "CIVILIAN001"],
+
+      labels : "none",
+      trails : "all",
+      vanish : false,
+
+      places : [
+        {[
+ name:"MetLife Stadium at:[-74.0745,40.8135], style:"venue" },
+        { name:"Teterboro", at:[-74.0608,40.8501], style:"airport" },
+        { name:"Newark", at:[-74.1687,40.6895], style:"airport" },
+        { name:"Westchester", at:[-73.7076,41.0670], style:"airport" },
+        { name:"Stewart", at:[-74.1048,41.5041], style:"airport" },
+        { name:"Hartford", at:[-72.6832,41.9389], style:"airport" },
+        { name:"Philadelphia", at:[-75.2411,39.8744], style:"airport" }
+      ],
+
+      zones : [
+        {
+          center:[-74.0745,40.8135],
+          radius_nm:10,
+          color:"#FF3B30",
+          label:"RESTRICTED AIRSPACE"
+        }
+      ],
+
+      show : {
+        clock:false,
+        counters:false,
+        zones:true,
+        placeLabels:true,
+        legend:false
+      }
+    });
+  };
+
+  e.onerror = function(){
+    document.body.innerHTML = '<p style="color:#fff;background:#000;padding:20px;font-family:Arial">engine.js failed to load.</p>';
+  };
+
+  document.body.appendChild(e);
+})();
+</script>
+</body>
+</html>
