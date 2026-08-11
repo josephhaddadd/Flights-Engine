@@ -20,114 +20,15 @@
       opacity: 0;
       animation: dimIn 1.8s ease-out 3.1s forwards;
     }
-
-    #zoneOverlay {
-      position: absolute;
-      inset: 0;
-      z-index: 20;
-      pointer-events: none;
-      opacity: 0;
-      transform: scale(0.92);
-      animation: zoneAppear 1.25s ease-out 1.8s forwards;
-    }
-
-    .zoneRing {
-      position: absolute;
-      left: 44.8%;
-      top: 42.8%;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      border: 3px dashed rgba(255, 59, 48, 0.95);
-      background: rgba(255, 59, 48, 0.055);
-      box-shadow: 0 0 18px rgba(255, 59, 48, 0.65), inset 0 0 18px rgba(255, 59, 48, 0.18);
-    }
-
-    .zoneRing.outer {
-      width: 410px;
-      height: 410px;
-      border-width: 2px;
-      background: rgba(255, 59, 48, 0.035);
-      animation: glowOuter 1.7s ease-in-out 3.3s infinite alternate;
-    }
-
-    .zoneRing.inner {
-      width: 132px;
-      height: 132px;
-      animation: glowInner 1.45s ease-in-out 3.2s infinite alternate;
-    }
-
-    .zoneLabel {
-      position: absolute;
-      left: 44.8%;
-      top: 42.8%;
-      transform: translate(-50%, -50%);
-      margin-top: -234px;
-      padding: 7px 11px;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      color: #ff7670;
-      background: rgba(0, 0, 0, 0.62);
-      border: 1px solid rgba(255, 59, 48, 0.45);
-      border-radius: 999px;
-      text-shadow: 0 2px 10px #000;
-      opacity: 0;
-      animation: labelIn 0.8s ease-out 2.8s forwards;
-    }
-
-    @keyframes zoneAppear {
-      from { opacity: 0; transform: scale(0.92); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes dimIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-
-    @keyframes labelIn {
-      from { opacity: 0; transform: translate(-50%, -50%) translateY(8px); }
-      to   { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
-    }
-
-    @keyframes glowInner {
-      from {
-        border-color: rgba(255, 59, 48, 0.75);
-        box-shadow: 0 0 14px rgba(255, 59, 48, 0.55), inset 0 0 14px rgba(255, 59, 48, 0.16);
-      }
-      to {
-        border-color: rgba(255, 130, 120, 1);
-        box-shadow: 0 0 38px rgba(255, 59, 48, 1), inset 0 0 30px rgba(255, 59, 48, 0.34);
-      }
-    }
-
-    @keyframes glowOuter {
-      from {
-        border-color: rgba(255, 59, 48, 0.55);
-        box-shadow: 0 0 18px rgba(255, 59, 48, 0.36), inset 0 0 20px rgba(255, 59, 48, 0.10);
-      }
-      to {
-        border-color: rgba(255, 130, 120, 0.95);
-        box-shadow: 0 0 50px rgba(255, 59, 48, 0.85), inset 0 0 38px rgba(255, 59, 48, 0.20);
-      }
-    }
   </style>
 </head>
 
 <body>
 <div id="dimWash"></div>
-
-<div id="zoneOverlay">
-  <div class="zoneRing outer"></div>
-  <div class="zoneRing inner"></div>
-  <div class="zoneLabel">RESTRICTED AIRSPACE</div>
-</div>
-
 <script>
 /*
   CHAPTER 0 - SHOT 2
-  Synthetic cold-open swarm with animated no-fly zone overlay.
+  Synthetic cold-open swarm with geographic VIP TFR rings rendered by Holiscope.
   Visual atmosphere only, not factual flight evidence.
 */
 
@@ -238,19 +139,27 @@ for (var i = 0; i < 70; i++) {
         { name:"Newark", at:[-74.1687,40.6895], style:"airport" },
         { name:"LaGuardia", at:[-73.8740,40.7769], style:"airport" },
         { name:"JFK", at:[-73.7781,40.6413], style:"airport" },
-        { name:"MetLife Stadium", at:[-74.0745,40.8135], style:"venue" }
+        { name:"MetLife Stadium", at:[-74.074167,40.813333], style:"venue" }
       ],
 
-      /*
-        Zones are handled by the animated HTML overlay above,
-        not by the engine zone system.
-      */
-      zones : [],
+      zones : [
+        {
+          center: [-74.074167, 40.813333],
+          inner_nm: 10,
+          outer_nm: 30,
+          innerColor: "#FF3B30",
+          outerColor: "#FF9500",
+          label: "VIP TFR",
+          effect: "appear-glow",
+          delay: 1.8,
+          duration: 1.25
+        }
+      ],
 
       show : {
         clock: true,
         counters: false,
-        zones: false,
+        zones: true,
         placeLabels: true,
         legend: false
       }

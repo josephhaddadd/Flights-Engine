@@ -48,7 +48,7 @@ trails:"all",
 vanish:false,
 
 places:[
-{name:"MetLife Stadium",at:[-74.0745,40.8135],style:"venue"},
+{name:"MetLife Stadium",at:[-74.074167,40.813333],style:"venue"},
 {name:"Teterboro",at:[-74.0608,40.8501],style:"airport"},
 {name:"Newark",at:[-74.1687,40.6895],style:"airport"},
 {name:"Westchester",at:[-73.7076,41.0670],style:"airport"},
@@ -59,10 +59,13 @@ places:[
 
 zones:[
 {
-center:[-74.0745,40.8135],
-radius_nm:10,
-color:"#FF3B30",
-label:"RESTRICTED AIRSPACE"
+center:[-74.074167,40.813333],
+inner_nm:10,
+outer_nm:30,
+innerColor:"#FF3B30",
+outerColor:"#FF9500",
+label:"VIP TFR",
+effect:"static"
 }
 ],
 

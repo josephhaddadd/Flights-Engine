@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><title>Ch5 gate</title></head>
+<head><meta charset="utf-8"><title>Ch4 the rush</title></head>
 <body>
 <script>
 (function(){
@@ -19,16 +19,15 @@
     Holiscope({
       style : "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
       token : "pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
-      length : "0:55",
-      window : ["13:00","20:00"],
+      length : "0:45",
+      window : ["08:00","13:00"],
       dateEpoch : 1784419200,
       dateLabel : "Sunday 19 July 2026",
       utcOffset : -4,
       camera : [-74.0371, 40.7728, 9.93],
       colour : "by_direction",
-      highlight : ["N495SM","EJA302"],
-      labels : "arrivals",
-      trails : "highlight",
+      labels : "none",
+      trails : "none",
       vanish : true,
       places : [
         { name:"Teterboro", at:[-74.0608,40.8501], style:"airport" },
@@ -36,22 +35,11 @@
         { name:"LaGuardia", at:[-73.8740,40.7769], style:"airport" },
         { name:"JFK", at:[-73.7781,40.6413], style:"airport" },
         { name:"Westchester", at:[-73.7076,41.0670], style:"airport" },
-        { name:"Philadelphia", at:[-75.2411,39.8719], style:"gateway" },
-        { name:"Allentown", at:[-75.4408,40.6521], style:"gateway" },
+        { name:"Morristown", at:[-74.4149,40.7994], style:"airport" },
         { name:"MetLife Stadium", at:[-74.074167,40.813333], style:"venue" }
       ],
-      zones : [
-        {
-          center:[-74.074167,40.813333],
-          inner_nm:10,
-          outer_nm:30,
-          innerColor:"#FF3B30",
-          outerColor:"#FF9500",
-          label:"VIP TFR",
-          effect:"static"
-        }
-      ],
-      show : { clock:true, counters:true, zones:true, placeLabels:true }
+      zones : [],
+      show : { clock:true, counters:true, zones:false, placeLabels:true }
     });
   }
 })();
