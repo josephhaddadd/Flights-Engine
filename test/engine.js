@@ -291,11 +291,22 @@ window.Holiscope=function(CFG){
   }
 
   // ====================================================== RENDER
+  function bearing(a,b){
+    var p1=a[1]*Math.PI/180,p2=b[1]*Math.PI/180;
+    var dl=(b[2]-a[2])*Math.PI/180;
+    var y=Math.sin(dl)*Math.cos(p2);
+    var x=Math.cos(p1)*Math.sin(p2)-Math.sin(p1)*Math.cos(p2)*Math.cos(dl);
+    return (Math.atan2(y,x)*180/Math.PI+360)%360;
+  }
   function posAt(tr,T){
     if(T<tr[0][0]||T>tr[tr.length-1][0])return null;
     for(var i=0;i<tr.length-1;i++){var a=tr[i],b=tr[i+1];
       if(a[0]<=T&&T<=b[0]){var u=(T-a[0])/((b[0]-a[0])||1);
-        var h0=a[4],h1=b[4],dh=((h1-h0+540)%360)-180;
+        var h0=Number(a[4]),h1=Number(b[4]);
+        // Some FR24 track responses contain heading=0 for every point.
+        // Derive the true movement bearing from adjacent coordinates instead.
+        if(!isFinite(h0)||!isFinite(h1)||(h0===0&&h1===0))h0=h1=bearing(a,b);
+        var dh=((h1-h0+540)%360)-180;
         return {lon:a[2]+(b[2]-a[2])*u,lat:a[1]+(b[1]-a[1])*u,alt:a[3]+(b[3]-a[3])*u,hdg:(h0+dh*u+360)%360};}}
     return null;}
   function wantLabel(f){ if(f.hero)return true; if(C.labels==="all")return true; if(C.labels==="arrivals")return !f.dep; if(C.labels==="departures")return f.dep; return false; }
