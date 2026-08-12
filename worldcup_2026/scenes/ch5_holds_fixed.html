@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Ch5 holds</title></head>
+<body>
+<script>
+(function(){
+  var d=document.createElement('script');
+  d.src='../scenes_data/holds.js';
+
+  d.onload=function(){
+
+    // Add meaningful labels to the data after holds.js loads.
+    // This avoids repacking holds.js just to change label text.
+    var NICE_LABELS = {
+      UAL963:  "UAL963  Berlin → Newark → Boston",
+      AUA3VG:  "AUA3VG  Vienna → Newark → Stewart",
+      RPA3435: "RPA3435  Toronto → Newark → Bradley",
+      AXY252W: "AXY252W  Nice → Newark → Morristown",
+      EJA165:  "EJA165  Fort Lauderdale → Teterboro → Westchester"
+    };
+
+    for (var k in NICE_LABELS) {
+      if (FLIGHTS[k]) {
+        FLIGHTS[k].label = NICE_LABELS[k];
+      }
+    }
+
+    // EJA165 reached Westchester before 1:00 PM, so it does not belong
+    // in this afternoon security-restriction sequence.
+    delete FLIGHTS.EJA165;
+
+    var e=document.createElement('script');
+    e.src='../../engine.js';
+    e.onload=go;
+    e.onerror=function(){
+      document.body.innerHTML='<p style="color:#fff;padding:20px">engine.js failed to load.</p>';
+    };
+    document.body.appendChild(e);
+  };
+
+  d.onerror=function(){
+    document.body.innerHTML='<p style="color:#fff;padding:20px">holds.js failed to load.</p>';
+  };
+
+  document.body.appendChild(d);
+
+  function go(){
+    Holiscope({
+      style : "mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
+      token : "pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
+
+      length : "0:50",
+
+      mode : "realtime",
+
+      // Real EDT window shared by the aircraft tracks and clock.
+      window : ["13:00","16:45"],
+      dateEpoch : 1784419200,
+      dateLabel : "Sunday 19 July 2026",
+      utcOffset : -4,
+
+      camera : [-72.8676, 41.3641, 7.79],
+
+      // Four different colors, with UAL963 as the hero.
+      colour : "per_flight",
+      highlight : ["UAL963"],
+
+      // Keep the hero label readable while all four tracks remain visible.
+      labels : "highlight",
+
+      // Keep all trails visible because the holds are the point.
+      trails : "all",
+
+      // Keep landed/diverted aircraft visible so the final diversion airports are readable.
+      vanish : false,
+
+      places : [
+        { name:"Teterboro", at:[-74.0608,40.8501], style:"airport" },
+        { name:"Newark", at:[-74.1687,40.6895], style:"airport" },
+        { name:"Westchester", at:[-73.7076,41.0670], style:"airport" },
+        { name:"Stewart", at:[-74.1048,41.5041], style:"airport" },
+        { name:"Boston", at:[-71.0096,42.3656], style:"airport" },
+        { name:"Bradley", at:[-72.6832,41.9389], style:"airport" },
+        { name:"Morristown", at:[-74.4149,40.7994], style:"airport" },
+        { name:"MetLife Stadium", at:[-74.074167,40.813333], style:"venue" }
+      ],
+
+      zones : [
+        {
+          center: [-74.074167, 40.813333],
+          inner_nm: 10,
+          outer_nm: 30,
+          innerColor: "#FF3B30",
+          outerColor: "#FF9500",
+          label: "VIP TFR",
+          effect: "static"
+        }
+      ],
+
+      show : {
+        clock:true,
+        counters:false,
+        placeLabels:true,
+        zones:true,
+        legend:true
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
