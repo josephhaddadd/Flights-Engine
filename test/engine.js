@@ -70,12 +70,13 @@ window.Holiscope=function(CFG){
     var isDep=(f.kind==="DEP");
     var hero=C.highlight.indexOf(id)>=0 || C.highlight.indexOf(f.callsign)>=0;
     var col;
-    if(hero)col="#1864AB";
+    if(f.color)col=f.color;
+    else if(hero)col="#1864AB";
     else if(C.colour==="per_flight")col=PALETTE[ci++%PALETTE.length];
     else if(C.colour==="by_direction")col=isDep?"#FFA94D":"#4DABF7";
     else col="#9fd0ff";
     LIST.push({id:id,tk:tk,dep:isDep,hero:hero,col:col,
-               label:(f.label||f.n||f.callsign||id),
+               label:(f.label||f.n||f.callsign||id), count:(f.count!==false),
                start:0,draw:C.draw});
   }
   if(C.mode==="drawin"){
@@ -312,10 +313,16 @@ window.Holiscope=function(CFG){
       // counters (realtime only)
       if(C.window){
         var mark=f.dep?tk[0][0]:tk[tk.length-1][0];
-        if(mark>=WF&&mark<=Tf){if(f.dep)nd++;else na++;}
+        if(f.count&&mark>=WF&&mark<=Tf){if(f.dep)nd++;else na++;}
       }
       var p=posAt(tk,Tf);
-      if(!p)continue;
+      if(!p){
+        if(f.hero&&Tf>tk[tk.length-1][0]&&C.trails!=="none"){
+          var doneCo=[];for(var dq=0;dq<tk.length;dq++)doneCo.push([tk[dq][2],tk[dq][1]]);
+          if(doneCo.length>1)trails.push({type:'Feature',properties:{c:f.col,w:2.6,o:0.38},geometry:{type:'LineString',coordinates:doneCo}});
+        }
+        continue;
+      }
       if(C.follow===f.id||C.follow===f.label)followPos=[p.lon,p.lat];
       var landed=C.vanish&&(p.alt<C.goneAlt);
       var showTrail=(C.trails==="all")||(C.trails==="highlight"&&f.hero)||(C.mode==="drawin");

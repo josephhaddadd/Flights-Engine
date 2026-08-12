@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Newark Chapter Test</title>
+  <style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}</style>
+</head>
+<body>
+<script src="./ewr_chapter_data.js"></script>
+<script>
+(function(){
+  var e=document.createElement('script');
+  e.src='./engine.js';
+  e.onload=function(){
+    Holiscope({
+      style:"mapbox://styles/josephhaddadd/cms3kjwjp018601s7e5qfb73r",
+      token:"pk.eyJ1Ijoiam9zZXBoaGFkZGFkZCIsImEiOiJjbXM2ZGoxYjgwNjNzMnlvYmN6cjloYWViIn0.uI9COa39fsVi3tc629QsYA",
+      length:"2:20",
+      window:["13:00","20:00"],
+      dateEpoch:1784419200,
+      dateLabel:"Sunday 19 July 2026",
+      utcOffset:-4,
+      mode:"realtime",
+      camera:[-74.32,41.08,7.15],
+      colour:"plain",
+      highlight:["HERO_UAL963","HERO_AUA3VG","HERO_RPA3435"],
+      trails:"highlight",
+      labels:"highlight",
+      vanish:true,
+      goneAlt:150,
+      places:[
+        {name:"Newark",at:[-74.1745,40.6895],style:"airport"},
+        {name:"Teterboro",at:[-74.0608,40.8501],style:"airport"},
+        {name:"LaGuardia",at:[-73.8740,40.7769],style:"airport"},
+        {name:"Stewart",at:[-74.1048,41.5041],style:"airport"},
+        {name:"Bradley",at:[-72.6832,41.9389],style:"airport"},
+        {name:"Boston",at:[-71.0052,42.3656],style:"airport"},
+        {name:"MetLife Stadium",at:[-74.074167,40.813333],style:"venue"}
+      ],
+      zones:[{
+        center:[-74.074167,40.813333],inner_nm:10,outer_nm:30,
+        innerColor:"#FF3B30",outerColor:"#FF9500",effect:"static"
+      }],
+      show:{clock:true,counters:true,zones:true,placeLabels:true,legend:false}
+    });
+  };
+  e.onerror=function(){document.body.innerHTML='<p style="color:white;padding:20px;font-family:Arial">engine.js failed to load.</p>';};
+  document.body.appendChild(e);
+})();
+</script>
+</body>
+</html>
